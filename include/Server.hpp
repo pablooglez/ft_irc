@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:37:38 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/06 17:36:41 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/06 18:54:23 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,8 @@ class Server
 			std::string		_password;
 			int				_server_fd;
 
+			bool			_running;
+			sockaddr_in		_server_addr;
 	public:
 			Server(int port, const std::string &password);
 			~Server();
@@ -56,4 +58,10 @@ class Server
 			int						GetPort() const;
 			const std::string		&GetPassword() const;
 			int						getServerFd() const;
+
+
+			bool	setupSocket();	// Configure Socket
+			void	start();		// Init Server
+			void	stop();			// Stop Server
+			void	cleanup();
 };

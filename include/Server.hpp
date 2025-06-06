@@ -6,13 +6,12 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:37:38 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/05 19:37:18 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/06 17:36:41 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-// Standar C++ Libraries
 #include <iostream> // std::cout, std::cerr
 #include <cstring> // std::string
 #include <cstdlib> // exit, atoi
@@ -45,6 +44,16 @@
 class Server
 {
 	private:
+			int				_port;
+			std::string		_password;
+			int				_server_fd;
 
 	public:
+			Server(int port, const std::string &password);
+			~Server();
+
+
+			int						GetPort() const;
+			const std::string		&GetPassword() const;
+			int						getServerFd() const;
 };

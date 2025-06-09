@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:37:38 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/09 17:32:46 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/09 20:15:50 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 // Sockets and Network
 #include <sys/socket.h> // socket, blind, listen, accept, send, recv, setsockopt, getsockname
 #include <netinet/in.h> // struct sockaddr_in, INADDR_ANY, htons, htonl, ntohs, ntohl
+#include <arpa/inet.h> // inet_ntop, inet_pton
 #include <netdb.h> // getprotobyname, gethostbyname, getaddrinfo, freeaddrinfo
 
 // I/O
@@ -39,6 +40,8 @@
 
 // Time
 #include <ctime> // time_t, time()
+
+extern int	g_global;
 
 class Server
 {
@@ -66,6 +69,9 @@ class Server
 			void	start();		// Init Server
 			void	stop();			// Stop Server
 			void	cleanup();		// Clean resources
+
+
+			static void	handleSignal(int signal); // Signals
 
 			// Methos poll()
 			void	runServerLoop();						// Array fds for poll()

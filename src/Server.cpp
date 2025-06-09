@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 17:05:24 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/06 19:40:05 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/09 20:39:17 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,13 +78,22 @@ bool	Server::setupSocket()
 		return (false);
 	}
 
-	if (fcntl(this->_server_fd, F_SETFL, O_NONBLOCK)) // Socket Not-blocking
+	if (fcntl(this->_server_fd, F_SETFL, O_NONBLOCK) == -1) // Socket Not-blocking
 	{
 		std::cerr << "Error: fcntl() failed" << std::endl;
 		cleanup();
 		return (false);
 	}
 
+	// Configure poll for server socket
+	struct pollfd server_pollfd;
+	server_pollfd.fd = this->_server_fd;
+	server_pollfd.events = POLLIN;
+	server_pollfd.revents = 0;
+
+	this->_poll_fds.push_back(server_pollfd);	// Add server socket to poll arraya
+
+	
 	std::cout << "Server socket created succesfully" << std::endl;
 	std::cout << "Listening in port: " << _port << std::endl;
 	std::cout << "Password: " << _password << std::endl;
@@ -102,12 +111,9 @@ void	Server::start()
 
 	this->_running = true;
 
-	std::cout << "    SERVER STARTED!!!!    " << std::endl;
+	std::cout << "    SERVER STARTED    " << std::endl;
 
-	while (this->_running)
-	{
-		sleep(1);
-	}
+	runServerLoop();
 }
 
 void	Server::stop()
@@ -119,9 +125,75 @@ void	Server::stop()
 
 void	Server::cleanup()
 {
+	// Cerrar todos los sockets de clientes
+	for (size_t i = 0; i < this->_client_fds.size(); i++)
+	{
+		close(this->_client_fds[i]);
+	}
+	this->_client_fds.clear();
+	
+	// Limpiar array de poll
+	this->_poll_fds.clear();
+	
+	// Cerrar socket del servidor
 	if (this->_server_fd != -1)
 	{
 		close(this->_server_fd);
 		this->_server_fd = -1;
 	}
+	
+	std::cout << "Server cleanup completed" << std::endl;
+}
+
+void	Server::handleSignal(int signal)
+{
+	g_global = signal;
+}
+
+void	Server::runServerLoop()
+{
+	signal(SIGINT, Server::handleSignal);
+
+	while (this->_running)
+	{
+		if (g_global == SIGINT)
+		{
+			this->_running = false;
+			break;
+		}
+
+		int	poll_result = poll(&this->_poll_fds[0], this->_poll_fds.size(), 1000);
+
+		if (poll_result == -1 && g_global == 0)
+		{
+			std::cerr << "Error: poll() failed" << std::endl;
+			break;
+		}
+		if (poll_result == 0)
+		{
+			continue;
+		}
+
+		for (size_t i = 0; i < this->_poll_fds.size(); i++)
+		{
+			if (this->_poll_fds[i].revents & POLLIN)
+			{
+				if (this->_poll_fds[i].fd == this->_server_fd)
+					handleNewConnection();
+				else
+					handleClientData(this->_poll_fds[i].fd);
+			}
+			if (this->_poll_fds[i].revents & (POLLHUP | POLLERR))
+			{
+				// Handle client disconnection
+				if (this->_poll_fds[i].fd != this->_server_fd)
+				{
+					std::cout << "Error: Client disconnected (error/hangup) (fd: " << this->_poll_fds[i].fd << ")" << std::endl;
+					removeClient(this->_poll_fds[i].fd);
+					i--;	// Adjust index because we removed an element
+				}
+			}
+		}
+	}
+	std::cout << "....SERVER STOPPED...." << std::endl;
 }

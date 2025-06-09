@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:37:42 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/06 19:02:02 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/09 17:08:50 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ int	main(int argc, char **argv)
 	}
 
 	Server server(std::atoi(argv[1]), argv[2]);
-
 	server.start();
+
 	return (0);
 }

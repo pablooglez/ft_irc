@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 17:05:24 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/09 20:39:17 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/09 20:40:13 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,4 +196,48 @@ void	Server::runServerLoop()
 		}
 	}
 	std::cout << "....SERVER STOPPED...." << std::endl;
+}
+
+void Server::handleNewConnection()
+{
+	struct sockaddr_in client_addr;
+	socklen_t client_len = sizeof(client_addr);
+	
+	int client_fd = accept(this->_server_fd, (struct sockaddr*)&client_addr, &client_len); // Accept new connection
+	if (client_fd == -1)
+	{
+		std::cerr << "Error: accept() failed" << std::endl;
+		return;
+	}
+
+	// Configurar socket cliente como no-bloqueante
+	int flags = fcntl(client_fd, F_GETFL, 0);
+	if (flags == -1 || fcntl(client_fd, F_SETFL, flags | O_NONBLOCK) == -1)
+	{
+		std::cerr << "Error: fcntl() failed for client" << std::endl;
+		close(client_fd);
+		return;
+	}
+
+	// Obtener IP del cliente para logging
+	char client_ip[INET_ADDRSTRLEN];
+	inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, INET_ADDRSTRLEN);
+	
+	std::cout << "New connection from " << client_ip << ":" << ntohs(client_addr.sin_port) << " (fd: " << client_fd << ")" << std::endl;
+
+	// Crear entrada para poll
+	struct pollfd client_pollfd;
+	client_pollfd.fd = client_fd;
+	client_pollfd.events = POLLIN;  // Solo datos entrantes por ahora
+	client_pollfd.revents = 0;
+
+	// Añadir a los arrays
+	this->_poll_fds.push_back(client_pollfd);
+	this->_client_fds.push_back(client_fd);
+	
+	std::cout << "Client added. Total clients: " << this->_client_fds.size() << std::endl;
+	
+	// Mensaje inicial (solicitar password)
+	std::string welcome_msg = "Enter the password (PASS <password>)\r\n";
+	send(client_fd, welcome_msg.c_str(), welcome_msg.length(), 0);
 }

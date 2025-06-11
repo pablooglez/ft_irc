@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 17:05:24 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/10 19:53:01 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/11 19:18:29 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,8 +177,8 @@ void	Server::runServerLoop()
 			{
 				if (this->_poll_fds[i].fd == this->_server_fd)
 					handleNewConnection();
-				else
-					handleClientData(this->_poll_fds[i].fd);
+				/*else
+					handleClientData(this->_poll_fds[i].fd);*/
 			}
 			if (this->_poll_fds[i].revents & (POLLHUP | POLLERR))
 			{
@@ -222,7 +222,7 @@ void	Server::handleNewConnection()
 	struct pollfd client_pollfd;
 	client_pollfd.fd = client_fd;
 	client_pollfd.events = POLLIN;
-	client_pollfd.events = 0;
+	client_pollfd.revents = 0;
 
 	this->_poll_fds.push_back(client_pollfd);
 	this->_client_fds.push_back(client_fd);
@@ -237,3 +237,46 @@ void	Server::handleNewConnection()
 	std::cout << "  - Total clients: " << this->_client_fds.size() << std::endl;
 }
 
+void	Server::removeClient(int client_fd)
+{
+	std::cout << "...Removing client (FD: " << client_fd << ")..." << std::endl;
+
+	// Find and remove from _client_fds
+	std::vector<int>::iterator it = std::find(this->_client_fds.begin(), this->_client_fds.end(), client_fd);
+
+	if (it != this->_client_fds.end())
+	{
+		this->_client_fds.erase(it);
+		std::cout << "Client remove fro_client_fds" << std::endl;
+	}
+	else
+		std::cerr << "Error: Client FD not found in _client_fds" << std::endl;
+
+	// Find and remove from _poll_fds
+	for (std::vector<struct pollfd>::iterator poll_it = this->_poll_fds.begin(); poll_it != this->_poll_fds.end(); ++poll_it)
+	{
+		if (poll_it->fd == client_fd)
+		{
+			this->_poll_fds.erase(poll_it);
+			std::cout << "Client removed from _poll_fds" << std::endl;
+			break;
+		}
+	}
+
+	if (close(client_fd) == -1)
+		std::cerr << "Error: Failed to close client socket" << std::endl;
+	else
+		std::cout << "Client socket closed successfully" << std::endl;
+
+	std::cout << "Client cleanup completed. Remaining clients: " << this->_client_fds.size() << std::endl;
+}
+
+int	Server::findClientIndex(int client_fd)
+{
+	for (size_t i = 0; i < this->_client_fds.size(); i++) // Search in _client_fds
+	{
+		if (this->_client_fds[i] == client_fd)
+			return static_cast<int>(i);
+	}
+	return (-1);
+}

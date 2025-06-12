@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 17:05:24 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/11 19:18:29 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/12 18:38:45 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,8 +177,8 @@ void	Server::runServerLoop()
 			{
 				if (this->_poll_fds[i].fd == this->_server_fd)
 					handleNewConnection();
-				/*else
-					handleClientData(this->_poll_fds[i].fd);*/
+				else
+					handleClientData(this->_poll_fds[i].fd);
 			}
 			if (this->_poll_fds[i].revents & (POLLHUP | POLLERR))
 			{
@@ -217,19 +217,19 @@ void	Server::handleNewConnection()
 		close(client_fd);
 		return;
 	}
-
+	
 	// Add the client to the poll array
 	struct pollfd client_pollfd;
 	client_pollfd.fd = client_fd;
 	client_pollfd.events = POLLIN;
 	client_pollfd.revents = 0;
-
+	
 	this->_poll_fds.push_back(client_pollfd);
 	this->_client_fds.push_back(client_fd);
-
+	
 	char	client_ip[INET_ADDRSTRLEN];
 	inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, INET_ADDRSTRLEN);
-
+	
 	std::cout << "New client connected:" << std::endl;
 	std::cout << "  - FD: " << client_fd << std::endl;
 	std::cout << "  - IP: " << client_ip << std::endl;
@@ -237,21 +237,42 @@ void	Server::handleNewConnection()
 	std::cout << "  - Total clients: " << this->_client_fds.size() << std::endl;
 }
 
+void	Server::handleClientData(int client_fd)
+{
+	std::cout << "...Handling data from client (FD: " << client_fd << ")..." << std::endl;
+
+	char buffer[1024];
+
+	ssize_t bytes_received = recv(client_fd, buffer, sizeof(buffer) -1, 0);
+
+	if (bytes_received < 0)
+	{
+		std::cerr << "Error: recv() failed for client" << client_fd << std::endl;
+		return;
+	}
+	else if (bytes_received == 0)
+	{
+		std::cout << "CLient (FD: " << client_fd << ") disconnected" << std::endl;
+		removeClient(client_fd);
+		return;
+	}
+}
+
 void	Server::removeClient(int client_fd)
 {
 	std::cout << "...Removing client (FD: " << client_fd << ")..." << std::endl;
-
+	
 	// Find and remove from _client_fds
 	std::vector<int>::iterator it = std::find(this->_client_fds.begin(), this->_client_fds.end(), client_fd);
-
+	
 	if (it != this->_client_fds.end())
 	{
 		this->_client_fds.erase(it);
 		std::cout << "Client remove fro_client_fds" << std::endl;
 	}
 	else
-		std::cerr << "Error: Client FD not found in _client_fds" << std::endl;
-
+	std::cerr << "Error: Client FD not found in _client_fds" << std::endl;
+	
 	// Find and remove from _poll_fds
 	for (std::vector<struct pollfd>::iterator poll_it = this->_poll_fds.begin(); poll_it != this->_poll_fds.end(); ++poll_it)
 	{

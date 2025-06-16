@@ -6,14 +6,17 @@
 #    By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/05/29 18:35:50 by pablogon          #+#    #+#              #
-#    Updated: 2025/06/16 17:57:02 by pablogon         ###   ########.fr        #
+#    Updated: 2025/06/16 18:34:59 by pablogon         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = ircserv
 
-SRC = src/main.cpp src/Server.cpp src/utils.cpp
+SRC = src/main.cpp src/Server.cpp src/utils.cpp \
+	src/cmd/quit.cpp
+
 OBJ = $(SRC:.cpp=.o)
+
 RM = rm -f
 
 CC = c++

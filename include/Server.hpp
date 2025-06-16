@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:37:38 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/16 17:54:25 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/16 18:19:50 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,4 +89,8 @@ class Server
 
 			// UTILS
 			std::vector<std::string> splitMessage(const std::string &message, char delimiter); // Split the message
+
+
+			// COMMANDS
+			void	QuitCommand(int client_fd, const std::vector<std::string> &tokens);
 };

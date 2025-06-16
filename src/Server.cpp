@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 17:05:24 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/16 17:57:29 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/16 19:50:59 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -290,6 +290,10 @@ void	Server::removeClient(int client_fd)
 		}
 	}
 
+	// Remove client buffer
+	_client_buffers.erase(client_fd);
+	std::cout << "Client buffer removed" << std::endl;
+
 	if (close(client_fd) == -1)
 		std::cerr << "Error: Failed to close client socket" << std::endl;
 	else
@@ -345,5 +349,9 @@ void	Server::parceIRCMessage(int client_fd, const std::string &message, char del
 	}
 
 	std::string command = tokens[0];
-	
+
+	std::cout << "Command: " << command << std::endl;
+
+	if (command == "QUIT" || command == "quit")
+		QuitCommand(client_fd, tokens);
 }

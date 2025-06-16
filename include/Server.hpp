@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:37:38 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/16 18:19:50 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/16 20:28:17 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,5 +92,6 @@ class Server
 
 
 			// COMMANDS
+			void	PassCommand(int client_fd, const std::vector<std::string> &tokens);
 			void	QuitCommand(int client_fd, const std::vector<std::string> &tokens);
 };

@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 17:05:24 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/16 19:50:59 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/16 20:56:37 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -350,8 +350,12 @@ void	Server::parceIRCMessage(int client_fd, const std::string &message, char del
 
 	std::string command = tokens[0];
 
+	std::transform(command.begin(), command.end(), command.begin(), ::toupper);
 	std::cout << "Command: " << command << std::endl;
 
-	if (command == "QUIT" || command == "quit")
+	if (command == "PASS")
+		PassCommand(client_fd, tokens);
+	else if (command == "QUIT")
 		QuitCommand(client_fd, tokens);
+	
 }

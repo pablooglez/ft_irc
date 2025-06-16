@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:37:38 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/09 20:15:50 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/16 17:54:25 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,8 @@ class Server
 
 			std::vector<struct pollfd>	_poll_fds;		// Arrays of fds for poll()
 			std::vector<int>			_client_fds;	// List of clients FDs (for mapping)
+
+			std::map<int, std::string> _client_buffers;	// Buffer for Client
 	public:
 			Server(int port, const std::string &password);
 			~Server();
@@ -79,4 +81,12 @@ class Server
 			void	handleClientData(int client_fd);		// Handle Client Data
 			void	removeClient(int client_fd);			// Remove Client
 			int		findClientIndex(int client_fd);			// Find Client Index
+
+			void	processClientMessages(int client_fd);	// Process Messages
+			void	parceIRCMessage(int client_fd, const std::string &message, char delimiter); // Parce IRC Messages
+			
+
+
+			// UTILS
+			std::vector<std::string> splitMessage(const std::string &message, char delimiter); // Split the message
 };

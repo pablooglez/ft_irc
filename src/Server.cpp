@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 17:05:24 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/12 18:38:45 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/16 17:57:29 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -243,19 +243,25 @@ void	Server::handleClientData(int client_fd)
 
 	char buffer[1024];
 
-	ssize_t bytes_received = recv(client_fd, buffer, sizeof(buffer) -1, 0);
+	ssize_t bytes_received = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
 
 	if (bytes_received < 0)
 	{
-		std::cerr << "Error: recv() failed for client" << client_fd << std::endl;
+		std::cerr << "Error: recv() failed for client " << client_fd << std::endl;
 		return;
 	}
 	else if (bytes_received == 0)
 	{
-		std::cout << "CLient (FD: " << client_fd << ") disconnected" << std::endl;
+		std::cout << "Client (FD: " << client_fd << ") disconnected" << std::endl;
 		removeClient(client_fd);
 		return;
 	}
+
+	buffer[bytes_received] = '\0';	// Finish buffer of null
+
+	_client_buffers[client_fd] += std::string(buffer, bytes_received);	// Add the new data to the client buffer
+	
+	processClientMessages(client_fd); // Process Complet messages
 }
 
 void	Server::removeClient(int client_fd)
@@ -268,10 +274,10 @@ void	Server::removeClient(int client_fd)
 	if (it != this->_client_fds.end())
 	{
 		this->_client_fds.erase(it);
-		std::cout << "Client remove fro_client_fds" << std::endl;
+		std::cout << "Client removed from _client_fds" << std::endl;
 	}
 	else
-	std::cerr << "Error: Client FD not found in _client_fds" << std::endl;
+		std::cerr << "Error: Client FD not found in _client_fds" << std::endl;
 	
 	// Find and remove from _poll_fds
 	for (std::vector<struct pollfd>::iterator poll_it = this->_poll_fds.begin(); poll_it != this->_poll_fds.end(); ++poll_it)
@@ -300,4 +306,44 @@ int	Server::findClientIndex(int client_fd)
 			return static_cast<int>(i);
 	}
 	return (-1);
+}
+
+void	Server::processClientMessages(int client_fd)
+{
+	std::string &buffer = _client_buffers[client_fd];
+	size_t pos = 0;
+
+	// Search messages ending in \r\n or \n
+	while ((pos = buffer.find("\r\n")) != std::string::npos || (pos = buffer.find("\n")) != std::string::npos)
+	{
+		std::string message = buffer.substr(0, pos);
+
+		if (buffer.substr(pos, 2) == "\r\n")	// Determine it is \r\n or \n to know how many characters to delete.
+		{
+			buffer.erase(0, pos + 2);			// Eliminate message + \r\n
+		}
+		else
+		{
+			buffer.erase(0, pos + 1);			// Eliminate message + \n
+		}
+
+		if (!message.empty())
+		{
+			std::cout << "Message received from FD" << client_fd << ": " << message << std::endl;
+			parceIRCMessage(client_fd, message, ' '); // Usar espacio como delimitador para comandos IRC
+		}
+	}
+}
+
+void	Server::parceIRCMessage(int client_fd, const std::string &message, char delimiter)
+{
+	std::vector<std::string> tokens = splitMessage(message, delimiter);
+
+	if (tokens.empty())
+	{
+		return;
+	}
+
+	std::string command = tokens[0];
+	
 }

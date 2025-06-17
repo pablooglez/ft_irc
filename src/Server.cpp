@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 17:05:24 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/16 20:56:37 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/17 19:12:59 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -357,5 +357,18 @@ void	Server::parceIRCMessage(int client_fd, const std::string &message, char del
 		PassCommand(client_fd, tokens);
 	else if (command == "QUIT")
 		QuitCommand(client_fd, tokens);
-	
+	else if (command == "NICK")
+		NickCommand(client_fd, tokens);
+	else if (command == "USER")
+		UserCommand(client_fd, tokens);
+	/*else if (command == "JOIN")
+	else if (command == "KICK")
+	else if (command == "INFO")
+	else if (command == "TOPIC")
+	else if (command == "PRIVMSG")
+	else if (command == "INVITE")
+	else if (command == "LIST")
+	else if (command == "NAMES")
+	else if (command == "BAN")
+	else if (command == "MODE")*/
 }

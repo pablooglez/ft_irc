@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 20:29:30 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/16 20:51:00 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/17 16:46:41 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 void	Server::PassCommand(int client_fd, const std::vector<std::string> &tokens)
 {
-
 	if (tokens.size() < 2)
 	{
 		std::cout << "PASS: insufficient parameters" << std::endl;

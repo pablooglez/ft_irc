@@ -6,14 +6,12 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 16:23:01 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/18 20:02:49 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/18 20:12:30 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/Channel.hpp"
 #include "../include/Client.hpp"
-#include <algorithm>
-#include <sstream>
 
 Channel::Channel()
 {

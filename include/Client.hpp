@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 13:23:19 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/18 20:04:33 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/18 20:12:29 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,9 @@
 
 #include <string>
 #include <vector>
+#include <algorithm>
+#include <iostream>
+#include <sys/socket.h>
 
 class Channel;
 

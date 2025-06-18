@@ -6,15 +6,12 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 16:19:42 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/18 19:53:37 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/18 20:12:25 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/Client.hpp"
 #include "../include/Channel.hpp"
-#include <algorithm>
-#include <iostream>
-#include <sys/socket.h>
 
 Client::Client()
 {

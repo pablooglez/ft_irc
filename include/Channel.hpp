@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 12:36:00 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/18 20:04:26 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/18 20:15:15 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 #include <string>
 #include <vector>
+#include <algorithm>
+#include <sstream> //std::stringstream
 
 class Client;
 

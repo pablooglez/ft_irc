@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:37:38 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/18 12:15:10 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/18 16:34:04 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,9 @@
 
 extern int	g_global;
 
+class Channel;
+class Client;
+
 class Server
 {
 	private:
@@ -57,6 +60,8 @@ class Server
 			std::vector<int>			_client_fds;	// List of clients FDs (for mapping)
 
 			std::map<int, std::string> _client_buffers;	// Buffer for Client
+
+			std::map<std::string, Channel> _channels;
 	public:
 			Server(int port, const std::string &password);
 			~Server();

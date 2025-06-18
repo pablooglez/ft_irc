@@ -6,14 +6,14 @@
 #    By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/05/29 18:35:50 by pablogon          #+#    #+#              #
-#    Updated: 2025/06/17 17:55:18 by pablogon         ###   ########.fr        #
+#    Updated: 2025/06/18 12:23:12 by pablogon         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = ircserv
 
 SRC = src/main.cpp src/Server.cpp src/utils.cpp \
-	src/cmd/quit.cpp src/cmd/pass.cpp src/cmd/nick.cpp
+	src/cmd/quit.cpp src/cmd/pass.cpp src/cmd/nick.cpp src/cmd/join.cpp
 
 OBJ = $(SRC:.cpp=.o)
 

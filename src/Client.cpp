@@ -6,11 +6,15 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 16:19:42 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/18 18:06:38 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/18 19:53:37 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/Client.hpp"
+#include "../include/Channel.hpp"
+#include <algorithm>
+#include <iostream>
+#include <sys/socket.h>
 
 Client::Client()
 {
@@ -185,7 +189,7 @@ bool	Client::isInChannel(const std::string &channel_name) const
 {
 	for (std::vector<Channel*>::const_iterator it = this->_channels.begin(); it != this->_channels.end(); ++it)
 	{
-		//if ((*it)->getName() == channel_name)
+		if ((*it)->getName() == channel_name)
 			return true;
 	}
 	return false;

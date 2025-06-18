@@ -6,16 +6,15 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 13:23:19 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/18 18:04:20 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/18 20:04:33 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-# include "Server.hpp"
-# include "Channel.hpp"
+#include <string>
+#include <vector>
 
-class Server;
 class Channel;
 
 class Client

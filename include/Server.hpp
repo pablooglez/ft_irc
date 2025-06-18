@@ -41,9 +41,10 @@
 // Time
 #include <ctime> // time_t, time()
 
+#include "Channel.hpp"
+
 extern int	g_global;
 
-class Channel;
 class Client;
 
 class Server

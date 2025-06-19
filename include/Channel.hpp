@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 12:36:00 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/18 20:15:15 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/19 15:50:27 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ class Channel
 			const std::string				&getName() const;
 			const std::string				&getTopic() const;
 			const std::string				&getPassword() const;
-			int								&getUserLimit() const;
+			int								getUserLimit() const;
 			const std::vector<Client*>		&getClients() const;
 			const std::vector<Client*>		&getOperators() const;
 			const std::vector<Client*>		&getInvited() const;

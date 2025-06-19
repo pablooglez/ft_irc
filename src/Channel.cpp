@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 16:23:01 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/18 20:12:30 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/19 15:50:32 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,9 +93,9 @@ const std::string &Channel::getPassword() const
 	return this->_password;
 }
 
-int &Channel::getUserLimit() const
+int Channel::getUserLimit() const
 {
-	return const_cast<int&>(this->_user_limit);
+	return this->_user_limit;
 }
 
 const std::vector<Client*> &Channel::getClients() const

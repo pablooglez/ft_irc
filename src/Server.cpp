@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 17:05:24 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/18 12:14:34 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/19 21:25:48 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ Server::Server(int port, const std::string &password)
 {
 	this->_port = port;
 	this->_password = password;
+	this->_server_name = "localhost";
 	this->_server_fd = -1;
 	this->_running = false;
 }
@@ -35,9 +36,22 @@ const std::string	&Server::GetPassword() const
 	return this->_password;
 }
 
+const std::string& Server::getServerName() const
+{
+	return this->_server_name;
+}
+
 int	Server::getServerFd() const
 {
 	return this->_server_fd;
+}
+
+std::string Server::getClientNick(int client_fd) const
+{
+	std::map<int, Client>::const_iterator it = _clients.find(client_fd);
+	if (it != _clients.end() && !it->second.getNickName().empty())
+		return it->second.getNickName();
+	return "*";  // Client without nicknmae
 }
 
 bool	Server::setupSocket()
@@ -132,6 +146,9 @@ void	Server::cleanup()
 	this->_client_fds.clear();
 
 	this->_poll_fds.clear(); // Clean poll array
+	
+	this->_client_buffers.clear(); // Clean client buffers
+	this->_clients.clear(); // Clean client objects
 
 	if (this->_server_fd != -1) // Close server socket
 	{
@@ -230,10 +247,14 @@ void	Server::handleNewConnection()
 	char	client_ip[INET_ADDRSTRLEN];
 	inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, INET_ADDRSTRLEN);
 	
+	// Create Client object
+	createClientObject(client_fd, std::string(client_ip));
+	
 	std::cout << "New client connected:" << std::endl;
 	std::cout << "  - FD: " << client_fd << std::endl;
 	std::cout << "  - IP: " << client_ip << std::endl;
 	std::cout << "  - Port: " << ntohs(client_addr.sin_port) << std::endl;
+	std::cout << "  - Client object created" << std::endl;
 	std::cout << "  - Total clients: " << this->_client_fds.size() << std::endl;
 }
 
@@ -293,6 +314,10 @@ void	Server::removeClient(int client_fd)
 	// Remove client buffer
 	_client_buffers.erase(client_fd);
 	std::cout << "Client buffer removed" << std::endl;
+
+	// Remove client object
+	_clients.erase(client_fd);
+	std::cout << "Client object removed" << std::endl;
 
 	if (close(client_fd) == -1)
 		std::cerr << "Error: Failed to close client socket" << std::endl;
@@ -355,12 +380,12 @@ void	Server::parceIRCMessage(int client_fd, const std::string &message, char del
 
 	if (command == "PASS")
 		PassCommand(client_fd, tokens);
-	else if (command == "QUIT")
-		QuitCommand(client_fd, tokens);
-	else if (command == "NICK")
+	/*else if (command == "NICK")
 		NickCommand(client_fd, tokens);
 	else if (command == "JOIN")
-		JoinCommand(client_fd, tokens);
+		JoinCommand(client_fd, tokens);*/
+	else if (command == "QUIT")
+		QuitCommand(client_fd, tokens);
 	/*else if (command == "KICK")
 	else if (command == "INFO")
 	else if (command == "TOPIC")
@@ -370,3 +395,59 @@ void	Server::parceIRCMessage(int client_fd, const std::string &message, char del
 	else if (command == "NAMES")
 	else if (command == "MODE")*/
 }
+
+// CLIENT MANAGEMENT FUNCTIONS
+
+void Server::createClientObject(int client_fd, const std::string &hostname)
+{
+	Client new_client(client_fd, hostname);
+	_clients[client_fd] = new_client;
+	
+	std::cout << "Client object created for FD: " << client_fd 
+			  << " with hostname: " << hostname << std::endl;
+}
+
+Client* Server::findClientByFd(int client_fd)
+{
+	std::map<int, Client>::iterator it = _clients.find(client_fd);
+	if (it != _clients.end())
+		return &(it->second);
+	return NULL;
+}
+
+bool Server::isNicknameInUse(const std::string &nickname)
+{
+	if (nickname.empty())
+		return false;
+		
+	for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); ++it)
+	{
+		if (it->second.getNickName() == nickname)
+			return true;
+	}
+	return false;
+}
+
+bool Server::isValidNickname(const std::string &nickname)
+{
+	if (nickname.empty() || nickname.length() > 9)	// Check if nickname is empty or too long (RFC 2812: max 9 characters)
+		return false;
+
+	char first = nickname[0];	// First character must be a letter or special character (not a digit)
+	
+	if (!std::isalpha(first) && first != '_' && first != '[' && first != ']' && 
+		first != '\\' && first != '`' && first != '^' && first != '{' && first != '}')
+		return false;
+	
+	for (size_t i = 0; i < nickname.length(); ++i)	// Check all characters are valid
+	{
+		char c = nickname[i];
+		if (!std::isalnum(c) && c != '_' && c != '-' && c != '[' && c != ']' && 
+			c != '\\' && c != '`' && c != '^' && c != '{' && c != '}')
+			return false;
+	}
+	return true;
+}
+
+
+

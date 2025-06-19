@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:37:38 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/18 20:15:41 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/19 17:17:21 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,34 +42,41 @@ extern int	g_global;
 
 # include "Client.hpp"
 # include "Channel.hpp"
+# include "RPL.hpp"
 
 class Client;
 class Channel;
+class RPL;
 
 class Server
 {
 	private:
 			int							_port;
 			std::string					_password;
+			std::string					_server_name;
 			int							_server_fd;
-
+	
 			bool						_running;
 			sockaddr_in					_server_addr;
-
+	
 			std::vector<struct pollfd>	_poll_fds;		// Arrays of fds for poll()
 			std::vector<int>			_client_fds;	// List of clients FDs (for mapping)
 
 			std::map<int, std::string> _client_buffers;	// Buffer for Client
+			std::map<int, Client>		_clients;		// Map of Client objects (fd -> Client)
 
 			std::map<std::string, Channel> _channels;
+
 	public:
 			Server(int port, const std::string &password);
 			~Server();
 
-
+			
 			int						GetPort() const;
 			const std::string		&GetPassword() const;
+			const std::string&		getServerName() const;		// Get server name for RPL messages
 			int						getServerFd() const;
+			std::string				getClientNick(int client_fd) const;	// Get client nickname or "*" if none
 
 
 			bool	setupSocket();	// Configure Socket
@@ -95,6 +102,11 @@ class Server
 			// UTILS
 			std::vector<std::string> splitMessage(const std::string &message, char delimiter); // Split the message
 
+			// CLIENT MANAGEMENT
+			void		createClientObject(int client_fd, const std::string &hostname); // Create Client object
+			Client*		findClientByFd(int client_fd);									// Find client by file descriptor
+			bool		isNicknameInUse(const std::string &nickname);					// Check if nickname is already taken
+			bool		isValidNickname(const std::string &nickname);					// Validate nickname format
 
 			// COMMANDS
 			void	PassCommand(int client_fd, const std::vector<std::string> &tokens);

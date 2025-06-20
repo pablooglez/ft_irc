@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 12:36:00 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/19 12:51:16 by albelope         ###   ########.fr       */
+/*   Updated: 2025/06/20 20:37:01 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,10 +69,11 @@ class Channel
 																		// EJ: delete channel envía mensajes PART a todos los miembros
 		
 		// === MEMBER MANAGEMENT ===
+		
+		bool						isMember(Client* member) const;					// Check if user is already in channel - Returns true if user is present
+																					// EJ: if(isMember(client)) previene mensajes JOIN duplicados
 		bool						addMember(Client* member);					// Add user to channel - Checks permissions, limits, passwords before adding
 																					// EJ: addMember(client) devuelve false si canal es +i y client no está invitado
-		bool						isMember(Client* member);					// Check if user is already in channel - Returns true if user is present
-																					// EJ: if(isMember(client)) previene mensajes JOIN duplicados
 		bool						leaveChannel(Client* member);				// Remove user from channel - Also removes from operators/invited lists if present
 																					// EJ: leaveChannel(client) en comando PART o QUIT
 		bool						kickUser(Client* kicker, Client* target);	// Forcibly remove user from channel - Only operators can kick, sends KICK message
@@ -87,25 +88,25 @@ class Channel
 																					// EJ: removeOperator(client) impide a client usar comandos de operador
 		bool						isOperator(Client* client) const;			// Check if user has operator privileges - Used before allowing privileged commands
 																					// EJ: if(isOperator(client)) permite ejecución del comando KICK
-		bool						isOperator(const std::string& nickname)const;// Check operator status by nickname - Useful when you only have the name
+		bool						isOperator(const std::string& nickname) const;// Check operator status by nickname - Useful when you only have the name
 																					// EJ: isOperator("alice") verifica si usuario "alice" es operador
 		
 		// === INVITATION MANAGEMENT ===
 		bool						addInvited(Client* client);				// Add user to invitation list - Allows bypassing invite-only restriction
-																			// EJ: addInvited(client) al ejecutar comando INVITE
-		bool						removeInvited(Client* client);				// Remove user from invitation list - Revokes invite-only bypass
-																			// EJ: removeInvited(client) cuando usuario entra o sale del canal
-		bool						isInvited(Client* client) const;			// Check if user is invited - Used in canJoin() validation
-																			// EJ: if(isInvited(client)) permite JOIN al canal +i
+																				// EJ: addInvited(client) al ejecutar comando INVITE
+		bool						removeInvited(Client* client);			// Remove user from invitation list - Revokes invite-only bypass
+																				// EJ: removeInvited(client) cuando usuario entra o sale del canal
+		bool						isInvited(Client* client) const;		// Check if user is invited - Used in canJoin() validation
+																				// EJ: if(isInvited(client)) permite JOIN al canal +i
 		void						clearInvited();							// Clear all invitations - Useful when changing from +i to -i mode
-																			// EJ: clearInvited() cuando MODE -i quita restricción de solo invitación
+																				// EJ: clearInvited() cuando MODE -i quita restricción de solo invitación
 
 		// === CHANNEL QUERIES AND VALIDATION ===
 		const std::vector<Client*>	&whoIsIn() const;						// Get reference to members list - Used for NAMES command and broadcasting
 																			// EJ: for(Client* c : whoIsIn()) envía mensaje a cada miembro
 		bool						canJoin(Client* client, const std::string& password = "") const;// Check if user can join channel - Validates password, limits, invites
 																			// EJ: if(!canJoin(client, "pass")) envía error 475 (contraseña incorrecta)
-		bool						channelIsEmpty();						// Check if channel has no members - Used to determine if channel should be deleted
+		bool						channelIsEmpty() const;						// Check if channel has no members - Used to determine if channel should be deleted
 																			// EJ: if(channelIsEmpty()) elimina canal del servidor
 		bool						isEmpty() const;						// Alternative empty check - Const version for read-only operations
 																			// EJ: if(isEmpty()) muestra "canal está vacío" en INFO
@@ -117,7 +118,7 @@ class Channel
 																			// EJ: if(getOperatorCount() == 0) promueve a alguien a operador
 
 		// === CLIENT SEARCH METHODS ===
-		Client*						getClient(const std::string& nickname)const;// Find user by nickname - Returns pointer to Client or nullptr if not found
+		Client*						getClientbyNickname(const std::string& nickname)const;// Find user by nickname - Returns pointer to Client or nullptr if not found
 																					// EJ: Client* user = getClient("alice"); if(user) envía mensaje privado
 		bool						hasClient(const std::string& nickname)const;// Check if nickname exists in channel - Faster than getClient when you only need true/false
 																					// EJ: if(hasClient("bob")) devuelve "usuario ya está en el canal"

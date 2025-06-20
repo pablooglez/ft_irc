@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 20:29:30 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/19 17:43:31 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/20 21:36:50 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,10 @@ void	Server::PassCommand(int client_fd, const std::vector<std::string> &tokens)
 	{
 		client->setAuthenticated(true);
 		std::cout << "Client" << client_fd << "authenticated successfully" << std::endl;
+
+		// Send simple success message
+		std::string next_instruction = ":localhost PRIVMSG * :Password accepted! Now set your nickname: NICK <your_nickname>\r\n";
+		client->sendMessage(next_instruction);
 	}
 	else
 	{

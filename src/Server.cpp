@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 17:05:24 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/19 21:25:48 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/20 22:12:40 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -374,18 +374,36 @@ void	Server::parceIRCMessage(int client_fd, const std::string &message, char del
 	}
 
 	std::string command = tokens[0];
-
 	std::transform(command.begin(), command.end(), command.begin(), ::toupper);
 	std::cout << "Command: " << command << std::endl;
 
+	Client *client = findClientByFd(client_fd);
+	if (!client)
+	{
+		std::cerr << "Error: Client not found for fd " << client_fd << std::endl;
+		return;
+	}
+
+	// Commands allowed during registration process
 	if (command == "PASS")
 		PassCommand(client_fd, tokens);
-	/*else if (command == "NICK")
+	else if (command == "NICK")
 		NickCommand(client_fd, tokens);
-	else if (command == "JOIN")
-		JoinCommand(client_fd, tokens);*/
+	else if (command == "USER")
+		UserCommand(client_fd, tokens);
 	else if (command == "QUIT")
 		QuitCommand(client_fd, tokens);
+	
+	// Commands that require full registration
+	else if (!client->isRegistered())
+	{
+		std::string error = ":localhost PRIVMSG * :Unknown command. Please complete registration first (PASS -> NICK -> USER)\r\n";
+		client->sendMessage(error);
+		return;
+	}
+	
+	/*else if (command == "JOIN")
+	JoinCommand(client_fd, tokens);*/
 	/*else if (command == "KICK")
 	else if (command == "INFO")
 	else if (command == "TOPIC")
@@ -396,6 +414,7 @@ void	Server::parceIRCMessage(int client_fd, const std::string &message, char del
 	else if (command == "MODE")*/
 }
 
+
 // CLIENT MANAGEMENT FUNCTIONS
 
 void Server::createClientObject(int client_fd, const std::string &hostname)
@@ -403,27 +422,30 @@ void Server::createClientObject(int client_fd, const std::string &hostname)
 	Client new_client(client_fd, hostname);
 	_clients[client_fd] = new_client;
 	
-	std::cout << "Client object created for FD: " << client_fd 
-			  << " with hostname: " << hostname << std::endl;
+	std::cout << "Client object created for FD: " << client_fd << " with hostname: " << hostname << std::endl;
+
+	// Send welcome instruction to new client
+	std::string welcome_instruction = ":localhost NOTICE * :Welcome to the server! Please authenticate: PASS <your_password>\r\n";
+	send(client_fd, welcome_instruction.c_str(), welcome_instruction.length(), 0);
 }
 
 Client* Server::findClientByFd(int client_fd)
 {
 	std::map<int, Client>::iterator it = _clients.find(client_fd);
 	if (it != _clients.end())
-		return &(it->second);
+	return &(it->second);
 	return NULL;
 }
 
 bool Server::isNicknameInUse(const std::string &nickname)
 {
 	if (nickname.empty())
-		return false;
-		
+	return false;
+	
 	for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); ++it)
 	{
 		if (it->second.getNickName() == nickname)
-			return true;
+		return true;
 	}
 	return false;
 }
@@ -431,22 +453,46 @@ bool Server::isNicknameInUse(const std::string &nickname)
 bool Server::isValidNickname(const std::string &nickname)
 {
 	if (nickname.empty() || nickname.length() > 9)	// Check if nickname is empty or too long (RFC 2812: max 9 characters)
-		return false;
+	return false;
 
 	char first = nickname[0];	// First character must be a letter or special character (not a digit)
 	
-	if (!std::isalpha(first) && first != '_' && first != '[' && first != ']' && 
-		first != '\\' && first != '`' && first != '^' && first != '{' && first != '}')
-		return false;
+	if (!std::isalpha(first) && first != '_' && first != '[' && first != ']' && first != '\\' && first != '`' && first != '^' && first != '{' && first != '}')
+	return false;
 	
 	for (size_t i = 0; i < nickname.length(); ++i)	// Check all characters are valid
 	{
 		char c = nickname[i];
-		if (!std::isalnum(c) && c != '_' && c != '-' && c != '[' && c != ']' && 
-			c != '\\' && c != '`' && c != '^' && c != '{' && c != '}')
-			return false;
+		if (!std::isalnum(c) && c != '_' && c != '-' && c != '[' && c != ']' && c != '\\' && c != '`' && c != '^' && c != '{' && c != '}')
+		return false;
 	}
 	return true;
+}
+
+// WELCOME MESSAGES
+void	Server::sendWelcomeMessages(int client_fd)
+{
+	Client *client = findClientByFd(client_fd);
+	if (!client)
+		return;
+
+	// RPL_WELCOME (001)
+	std::string welcome = RPL::RPL_WELCOME(getServerName(), client->getNickName(), client->getUserName(), client->getHostName());
+	client->sendMessage(welcome);
+
+	// RPL_YOURHOST (002)
+	std::string yourhost = RPL::RPL_YOURHOST(getServerName(), client->getNickName(), getServerName(), "1.0");
+	client->sendMessage(yourhost);
+
+	// RPL_CREATED (003)
+	std::string created = RPL::RPL_CREATED(getServerName(), client->getNickName(), "June 20, 2025");
+	client->sendMessage(created);
+
+	// RPL_MYINFO (004)
+	std::string myinfo = RPL::RPL_MYINFO(getServerName(), client->getNickName(), getServerName(), "1.0", "i", "o");
+	client->sendMessage(myinfo);
+	
+	std::cout << "Welcome messages sent to client " << client_fd << " (" << client->getNickName() << ")" << std::endl;
 }
 
 

@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:37:38 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/19 17:17:21 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/20 21:05:52 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,21 +96,25 @@ class Server
 
 			void	processClientMessages(int client_fd);	// Process Messages
 			void	parceIRCMessage(int client_fd, const std::string &message, char delimiter); // Parce IRC Messages
+
 			
-
-
-			// UTILS
-			std::vector<std::string> splitMessage(const std::string &message, char delimiter); // Split the message
-
 			// CLIENT MANAGEMENT
 			void		createClientObject(int client_fd, const std::string &hostname); // Create Client object
 			Client*		findClientByFd(int client_fd);									// Find client by file descriptor
 			bool		isNicknameInUse(const std::string &nickname);					// Check if nickname is already taken
 			bool		isValidNickname(const std::string &nickname);					// Validate nickname format
-
+			
+			
 			// COMMANDS
 			void	PassCommand(int client_fd, const std::vector<std::string> &tokens);
-			void	QuitCommand(int client_fd, const std::vector<std::string> &tokens);
 			void	NickCommand(int client_fd, const std::vector<std::string> &tokens);
+			void	UserCommand(int client_fd, const std::vector<std::string> &tokens);
+			void	QuitCommand(int client_fd, const std::vector<std::string> &tokens);
 			void	JoinCommand(int client_fd, const std::vector<std::string> &tokens);
+
+			// WELCOME MESSAGES
+			void	sendWelcomeMessages(int client_fd);	// Send welcome messages to registered client
+
+			// UTILS
+			std::vector<std::string> splitMessage(const std::string &message, char delimiter); // Split the message
 };

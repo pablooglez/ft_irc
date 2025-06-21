@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 16:45:52 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/20 21:36:53 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/21 18:25:02 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,12 +95,7 @@ void	Server::NickCommand(int client_fd, const std::vector<std::string> &tokens)
 
 	std::cout << "Client " << client_fd << " changed nickname to: " << new_nickname << std::endl;	// Success log
 
-	if (!client->isRegistered() && client->isAuthenticated() && client->hasNickName())		// Send next instruction if not fully registered yet
-	{
-		std::string next_instruction = ":localhost PRIVMSG * :Nickname accepted! Complete registration: USER <username> <hostname> <servername> <realname>\r\n";
-		client->sendMessage(next_instruction);
-	}
-	else if (client->isRegistered())
+	if (client->isRegistered())
 	{
 		std::cout << "Client " << client_fd << " is now fully registered!" << std::endl;
 	}

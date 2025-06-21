@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 17:05:24 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/20 22:12:40 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/21 18:24:09 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -397,13 +397,13 @@ void	Server::parceIRCMessage(int client_fd, const std::string &message, char del
 	// Commands that require full registration
 	else if (!client->isRegistered())
 	{
-		std::string error = ":localhost PRIVMSG * :Unknown command. Please complete registration first (PASS -> NICK -> USER)\r\n";
+		// Send standard IRC error code without custom messages
+		std::string error = ":localhost 451 * :You have not registered\r\n";
 		client->sendMessage(error);
 		return;
 	}
-	
-	/*else if (command == "JOIN")
-	JoinCommand(client_fd, tokens);*/
+	else if (command == "JOIN")
+		JoinCommand(client_fd, tokens);
 	/*else if (command == "KICK")
 	else if (command == "INFO")
 	else if (command == "TOPIC")
@@ -421,12 +421,9 @@ void Server::createClientObject(int client_fd, const std::string &hostname)
 {
 	Client new_client(client_fd, hostname);
 	_clients[client_fd] = new_client;
-	
+
 	std::cout << "Client object created for FD: " << client_fd << " with hostname: " << hostname << std::endl;
 
-	// Send welcome instruction to new client
-	std::string welcome_instruction = ":localhost NOTICE * :Welcome to the server! Please authenticate: PASS <your_password>\r\n";
-	send(client_fd, welcome_instruction.c_str(), welcome_instruction.length(), 0);
 }
 
 Client* Server::findClientByFd(int client_fd)

@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 12:36:00 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/20 20:37:01 by albelope         ###   ########.fr       */
+/*   Updated: 2025/06/21 15:35:35 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,7 +190,9 @@ class Channel
 																				// EJ: chan.setTopicRestricted(true); // MODE +t
 		bool						setUserLimit(int limit);			// Set user limit - Enables +l mode with specified maximum users, returns success
 																			// EJ: if(chan.setUserLimit(50)) send("MODE +l 50"); else send_error();
-
+		
+		
+		//=====================================================================================
 		// === FUTURES (CHECK IF WE NEEDED AND WE ARE NOT TIRED OF FT_IRC)=====
 				//INFO TIMESTAMPS-----
 		time_t							_creationTime;					// Channel creation timestamp - Used for channel age and INFO responses

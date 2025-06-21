@@ -6,12 +6,13 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 12:48:09 by albelope          #+#    #+#             */
-/*   Updated: 2025/06/20 20:36:58 by albelope         ###   ########.fr       */
+/*   Updated: 2025/06/21 17:30:22 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/Channel.hpp"
 #include "../include/Client.hpp"
+#include <sstream>
 
 // === CONSTRUCTORS ===
 
@@ -408,4 +409,248 @@ Client* Channel::getClientbyNickname(const std::string& nickname) const {
 			return _members[i];
 	}
 	return NULL;	
+}
+
+bool	Channel::hasClient(const std::string& nickname) const {
+	for (size_t i = 0; i < _members.size(); i++) {
+		if (_members[i]->getNickName() == nickname)
+			return true;
+	}
+	return false;
+}
+/*
+ * getClientbyNickname() vs hasClient()
+ * Ambas recorren _members buscando un nickname, pero no hacen lo mismo:
+ * ------------------------hasClient(nickname)--------------------------
+ *     → Devuelve true/false. Solo comprueba si alguien está en el canal.
+ *     → Útil para validaciones rápidas:
+ *         · NAMES → ¿Está este usuario?
+ *         · PRIVMSG → ¿Puede escribir aquí?
+ *         · Logs/debug → ¿Quién está conectado
+ * ---------------------- getClientbyNickname(nickname)-------------------
+ *     → Devuelve un Client* o NULL. Te da el objeto si está.
+ *     → Útil cuando necesitas usar ese cliente:
+ *         · KICK → para echarlo
+ *         · MODE → para cambiarle permisos
+ *         · PRIVMSG directo → para enviarle datos
+ * -----------Analogía-------------------------------------------------
+ *   hasClient()          → "¿Está Juan en casa?"
+ *   getClientbyNickname()→ "Pásame a Juan, quiero hablar con él"
+ */
+
+
+
+	// ===============================================
+	// ========== PERMISSION VALIDATION ==============
+	// ===============================================
+	
+
+bool	Channel::canKick(Client* kicker, Client* target) const {
+	if (kicker == NULL || target == NULL)
+		return false;
+	if (kicker == target)
+		return false;
+	if (!isOperator(kicker))
+		return false;
+	if (!isMember(target))
+		return false;
+	return true;
+}
+
+bool	Channel::canSetTopic(Client* client) const {
+	if (client == NULL)
+		return false;
+	if (!isMember(client))
+		return false;
+	if (_topicRestricted) {
+		if (!isOperator(client))
+			return false;
+	}
+	return true;
+}
+
+
+
+	// ===============================================
+	// ============ COMMUNICATION METHODS ============
+	// ===============================================
+
+
+void	Channel::broadcast(const std::string& message, Client* sender = NULL) const {}
+
+void	Channel::broadcastToOthers(const std::string& message, Client* sender) const {}
+
+
+
+
+	// ===============================================
+	// ============ COMMUNICATION METHODS ============
+	// ===============================================
+
+
+std::string		Channel::getNamesReply() const {
+	if (_members.empty())
+		return "";
+		
+	std::string result;
+	for (size_t i = 0; i < _members.size(); i++) {
+		if (isOperator(_members[i])) {
+            result =result + "@";
+        }
+        result = result + _members[i]->getNickName();
+        result = result + " ";
+    }
+    return result;	
+}
+/*	getNamesReply():
+         Hace la lista de todos los usuarios que están en el canal para el comando NAMES.
+         Si es operador le pone @ delante, si no es operador va normal.
+    Lets doit:
+        - Recorro _members que tiene todos los usuarios del canal
+        - Para cada usuario miro si es operador con isOperator()
+        - Si es operador le añado @ antes del nickname
+        - Siempre le añado el nickname con getNickName()
+        - Le pongo un espacio después para separar del siguiente
+        - Al final devuelvo todo junto en un string 
+    EJ:.    Si en el canal hay alice (operador), bob (normal), charlie (operador)
+       ----------------- Devuelve: "@alice bob @charlie " 
+    Para el comando NAMES del IRC para ver quien esta conectado */
+
+std::string		Channel::getModes() const {
+	
+	std::string allmodes = "+";	
+	if (_inviteOnly)
+		allmodes = allmodes + "i";
+	if (_topicRestricted)
+		allmodes = allmodes + "t";
+	if (_hasPassword)
+		allmodes = allmodes + "k";
+	if (_hasUserLimit)
+		allmodes = allmodes + "l";
+	return allmodes;
+}
+/*  getModes():
+    Construimos el string de modos activos del canal
+    Empieza con "+" y añade cada modo activo
+    Devuelve ejemplos: "+it", "+tkl", "+i" */
+
+std::string		Channel::getTopicReply() const {
+	return _topic;
+}
+
+std::string		Channel::getChannelInfo() const {
+	
+	std::string channelInfo = "Channel ";
+	channelInfo = channelInfo + _name;
+	
+	std::stringstream numMembers;
+	numMembers << _members.size();
+	channelInfo = channelInfo + numMembers.str() + " users, ";
+	
+	std::stringstream numOps;
+	numOps << _operators.size();
+	channelInfo = channelInfo + numOps.str() + " operators,";
+	channelInfo = channelInfo + " modes "+ getModes();
+	if (!_topic.empty())
+		channelInfo = channelInfo + ", topic: " + _topic;
+	else
+		channelInfo = channelInfo + ", topic: NO TOPIC ";
+	return channelInfo;
+}
+/* mostramos la info aunque este todo vacio... si no añadiriamos if !... .empty() etc..
+	se puede mejorar para hacer mas tonterias de mostrar info si no hya nada*/
+
+std::string		Channel::getUserListString() const {
+	std::string	showNicknames;
+	if (!_members.empty()) {
+		for (size_t i = 0; i < _members.size(); i++) { 
+			showNicknames = showNicknames + _members[i]->getNickName() + " ";
+		}
+	}
+	else {
+		showNicknames = "No Users";
+	}
+	return showNicknames;
+}
+
+	// ===============================================
+	// ========== STATIC VALIDATION METHODS ==========
+	// ===============================================
+	
+bool		Channel::isValidChannelName(const std::string& name){}
+	
+bool		Channel::isValidPassword(const std::string& password){}
+	
+bool		Channel::isValidTopic(const std::string& topic){}
+
+
+
+	// ===============================================
+	// ========== GETTERS (READ-ONLY ACCESS) =========
+	// ===============================================
+
+const std::string& Channel::getChannelName() const {
+	return _name;
+}
+
+const std::vector<Client*>& Channel::getMembers() const {
+	return _members;
+}
+
+const std::string& Channel::getPassword() const {
+	return _key;
+}
+
+const std::string& Channel::getTopic() const{
+	return _topic;
+}
+
+bool	Channel::isInviteOnly() const {
+	return _inviteOnly;
+}
+
+bool	Channel::isTopicRestricted() const{
+	return _topicRestricted;
+}
+
+int		Channel::getUserLimit() const {
+	if (_hasUserLimit)
+		return _userLimit;
+	return 0;
+}
+
+bool	Channel::hasPassword() const {
+	return _hasPassword;
+}
+
+bool	Channel::hasUserLimit() const {
+	return _hasUserLimit;
+}
+
+	// ===============================================
+	// ======= SETTERS (MODIFY CHANNEL STATE) ========
+	// ===============================================
+
+void	Channel::setPassword(const std::string &password) {
+	
+}
+
+void	Channel::setTopic(const std::string &topicName) {
+	
+}
+
+void	Channel::setChannelName(const std::string &name) {
+	
+}
+
+void	Channel::setInviteOnly(bool invite) {
+	
+}
+
+void	Channel::setTopicRestricted(bool restricted) {
+	
+}
+
+bool	Channel::setUserLimit(int limit) {
+	
 }

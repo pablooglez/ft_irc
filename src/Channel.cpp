@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 12:48:09 by albelope          #+#    #+#             */
-/*   Updated: 2025/06/21 17:30:22 by albelope         ###   ########.fr       */
+/*   Updated: 2025/06/22 18:25:21 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -577,12 +577,64 @@ std::string		Channel::getUserListString() const {
 	// ========== STATIC VALIDATION METHODS ==========
 	// ===============================================
 	
-bool		Channel::isValidChannelName(const std::string& name){}
+bool		Channel::isValidChannelName(const std::string& name) {
+	if (name.empty())
+		return false;
+	if (name.length() < 2)
+		return false;
+	if (name[0] != '#')
+		return false;
+	if (name.length() > 50)
+		return false;
+	if (name == "#SERVER" || name == "#NULL" || name == "#ADMIN" 
+    || name == "#OPER" || name == "#ROOT")
+		return false;
+	for (size_t i = 1; i < name.length(); i++) {
+		if (name[i] == ' ' || name[i] == ',' || name[i] == '\n'
+				|| name[i] == '\r' || name[i] == '\0' || name[i] == '\t'
+				|| name[i] == ':' || name[i] == '!' || name[i] == '@'
+				|| name[i] == '&' || name[i] == '+')
+			return false;
+	}
+	return true;
+	// Minusculas y Mayusculas .. check if lo neceistamos? Se podria implementar
+	// devolver cout en mensajes de error  para el usuario ????
+}
 	
-bool		Channel::isValidPassword(const std::string& password){}
+bool		Channel::isValidPassword(const std::string& password) {
+	if (password.empty())
+		return true;
+	 // Contraseña vacía es válida para desactivar el modo +k del canal
+    // En IRC: MODE #canal -k (quitar contraseña) internamente usa password=""
+	if (password.length() < 3 || password.length() > 14)
+		return false;
+	for (size_t i = 0; i < password.length(); i++) {
+		if (password[i] == ' ' || password[i] == '\n' || password[i] == '\r'
+        	|| password[i] == '\0' || password[i] == '\t'
+        	|| password[i] == ':' || password[i] == '!')
+		return false; 
+	}
+	return true;
+	//devolver mensajes de error para el usuario del worng passwrod?
+		/*¿Por qué usamos password.empty()? 
+	Porque si está vacía, quitamos la pass del canal, como cuando haces MODE -k.
+	Así con setPassword("") se borra bien y _hasPassword se pone en false automáticamente.
+	Todo queda sincronizado sin líos.*/
+ }
 	
-bool		Channel::isValidTopic(const std::string& topic){}
-
+bool		Channel::isValidTopic(const std::string& topic) {
+	// Topic vacío es válido para quitar el topic del canal
+	// En IRC: TOPIC #canal (sin texto) borra el topic
+	if (topic.empty())
+		return true;
+	if (topic.length() > 390)
+		return false;
+	for (size_t i = 0; i < topic.length(); i++) {
+		if (topic[i] == '\0' || topic[i] == '\r' || topic[i] == '\n')
+			return false;
+	}
+	return true;
+}
 
 
 	// ===============================================
@@ -632,25 +684,52 @@ bool	Channel::hasUserLimit() const {
 	// ===============================================
 
 void	Channel::setPassword(const std::string &password) {
-	
+	_key = password;
+	//actualizamos el flag
+	_hasPassword = !password.empty();
 }
+/*
+Cambiar contraseña del canal (modo +k):
+- Si metes una string (ej: "clave123") ⇒ activa el modo +k y guarda la clave.
+- Si metes "" ⇒ desactiva el modo +k y borra la _key.
+¿Por que y para que !password.empty()?
+- Si la string no esta vacía -> hay contraseña → _hasPassword = true
+- Si está vacía → no hay contraseña → _hasPassword = false
+ _key y _hasPassword siempre estány deben estar sincronizados.
+Solo los Op pueden hacer esto.
+*/
 
 void	Channel::setTopic(const std::string &topicName) {
+	_topic = topicName;
 	
 }
 
 void	Channel::setChannelName(const std::string &name) {
-	
+	_name = name;	
 }
 
 void	Channel::setInviteOnly(bool invite) {
-	
+	_inviteOnly = invite;
 }
+/*
+setInviteOnly(bool invite):
+Esto activa o desactiva el modo +i del canal. 
+Si pones true, solo pueden entrar los que estén invitados. Si pones false, entra quien quiera.
+Lo típico de MODE +i o -i llama a esto. Solo los ops pueden usarlo. 
+_inviteOnly es el bool que dice si el canal está cerrado, y _invited es la lista de los que tienen pase para entrar.
+Ejo: pones setInviteOnly(true), luego haces inviteUser("alice") y ella entra, pero bob no porque no está invitado.
+*/
 
 void	Channel::setTopicRestricted(bool restricted) {
-	
+	_topicRestricted = restricted;
 }
 
 bool	Channel::setUserLimit(int limit) {
-	
+	if (limit < 0)
+        return false;
+    _userLimit = limit;
+	// limit = 0 significa "sin límite" (permite infinitos usuarios)
+    // limit > 0 significa "límite activo"
+    _hasUserLimit = (limit > 0);
+    return true;
 }

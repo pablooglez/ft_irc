@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 12:48:09 by albelope          #+#    #+#             */
-/*   Updated: 2025/06/22 18:25:21 by albelope         ###   ########.fr       */
+/*   Updated: 2025/06/24 12:45:50 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -362,6 +362,8 @@ bool	Channel::canJoin(Client* client, const std::string& password) const {
 	if (_hasUserLimit) {
 		if (_members.size() >= _userLimit)
 			return false;
+	//casteo si hace warnings --size_t con int. (o poner size_t userlimit)
+	// o comprobar antes si es el numero negativo para evitar el warning tb.
 	}
 	return true;
 }
@@ -372,7 +374,7 @@ bool	Channel::channelIsEmpty() const{
 	if (_members.empty())
 		return true;
 }
-
+// dejar o simplificar , solo sirven por sintaxis funcional
 bool	Channel::isEmpty() const {
 	if (!_members.empty())
 		return false;
@@ -476,15 +478,31 @@ bool	Channel::canSetTopic(Client* client) const {
 	// ===============================================
 
 
-void	Channel::broadcast(const std::string& message, Client* sender = NULL) const {}
+void	Channel::broadcast(const std::string& message, Client* sender) const {
+	for (size_t i = 0; i < _members.size(); i++) {
+		if (_members[i] == NULL)
+			continue ;
+		_members[i]->sendMessage(message);
+	}
+}
+// avisa a todos quien entra al canal o se va o topic o kick
 
-void	Channel::broadcastToOthers(const std::string& message, Client* sender) const {}
+void	Channel::broadcastToOthers(const std::string& message, Client* sender) const {
+	for (size_t i = 0; i < _members.size(); i++) {
+		if (_members[i] == NULL)
+			continue ;
+		if (_members[i] == sender)
+			continue ;
+		_members[i]->sendMessage(message);
+	}
+}
+// a todos menos a uno (toOthers)
 
 
 
 
 	// ===============================================
-	// ============ COMMUNICATION METHODS ============
+	// ============ IRC PROTOCOL RESPONSES ===========
 	// ===============================================
 
 
@@ -539,23 +557,16 @@ std::string		Channel::getTopicReply() const {
 }
 
 std::string		Channel::getChannelInfo() const {
+	std::ostringstream channelInfo;
+	channelInfo << "Channel " << _name << ": " << _members.size() << " users, "
+		<< _operators.size() << " operators, modes " << getModes();
 	
-	std::string channelInfo = "Channel ";
-	channelInfo = channelInfo + _name;
-	
-	std::stringstream numMembers;
-	numMembers << _members.size();
-	channelInfo = channelInfo + numMembers.str() + " users, ";
-	
-	std::stringstream numOps;
-	numOps << _operators.size();
-	channelInfo = channelInfo + numOps.str() + " operators,";
-	channelInfo = channelInfo + " modes "+ getModes();
 	if (!_topic.empty())
-		channelInfo = channelInfo + ", topic: " + _topic;
+		channelInfo << ", topic: " << _topic;
 	else
-		channelInfo = channelInfo + ", topic: NO TOPIC ";
-	return channelInfo;
+		channelInfo << ", no topic !";
+		
+	return channelInfo.str();
 }
 /* mostramos la info aunque este todo vacio... si no añadiriamos if !... .empty() etc..
 	se puede mejorar para hacer mas tonterias de mostrar info si no hya nada*/
@@ -728,8 +739,10 @@ bool	Channel::setUserLimit(int limit) {
 	if (limit < 0)
         return false;
     _userLimit = limit;
-	// limit = 0 significa "sin límite" (permite infinitos usuarios)
-    // limit > 0 significa "límite activo"
+	// limit = 0 significa "No limit men" (permite infinitos usuarios)
+    // limit > 0 significa "limite activo"
     _hasUserLimit = (limit > 0);
     return true;
 }
+
+

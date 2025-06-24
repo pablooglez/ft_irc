@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 17:05:24 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/21 18:24:09 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/24 19:41:00 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -393,21 +393,13 @@ void	Server::parceIRCMessage(int client_fd, const std::string &message, char del
 		UserCommand(client_fd, tokens);
 	else if (command == "QUIT")
 		QuitCommand(client_fd, tokens);
-	
-	// Commands that require full registration
-	else if (!client->isRegistered())
-	{
-		// Send standard IRC error code without custom messages
-		std::string error = ":localhost 451 * :You have not registered\r\n";
-		client->sendMessage(error);
-		return;
-	}
 	else if (command == "JOIN")
 		JoinCommand(client_fd, tokens);
+	else if (command == "PRIVMSG")
+		PrivmsgCommand(client_fd, tokens);
 	/*else if (command == "KICK")
 	else if (command == "INFO")
 	else if (command == "TOPIC")
-	else if (command == "PRIVMSG")
 	else if (command == "INVITE")
 	else if (command == "LIST")
 	else if (command == "NAMES")
@@ -431,6 +423,16 @@ Client* Server::findClientByFd(int client_fd)
 	std::map<int, Client>::iterator it = _clients.find(client_fd);
 	if (it != _clients.end())
 	return &(it->second);
+	return NULL;
+}
+
+Client* Server::findClientByNick(const std::string &nickname)
+{
+	for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); ++it)
+	{
+		if (it->second.getNickName() == nickname && it->second.isRegistered())
+			return &(it->second);
+	}
 	return NULL;
 }
 
@@ -464,6 +466,47 @@ bool Server::isValidNickname(const std::string &nickname)
 		return false;
 	}
 	return true;
+}
+
+// CHANNEL MANAGEMENT FUNCTIONS
+
+Channel* Server::findOrCreateChannel(const std::string &channel_name)
+{
+	std::map<std::string, Channel>::iterator it = _channels.find(channel_name);
+	if (it != _channels.end())
+	{
+		return &(it->second);
+	}
+	
+	// Create new channel
+	Channel new_channel(channel_name);
+	_channels[channel_name] = new_channel;
+	std::cout << "New channel created: " << channel_name << std::endl;
+	
+	return &_channels[channel_name];
+}
+
+Channel* Server::findChannel(const std::string &channel_name)
+{
+	std::map<std::string, Channel>::iterator it = _channels.find(channel_name);
+	if (it != _channels.end())
+		return &(it->second);
+	return NULL;
+}
+
+bool Server::channelExists(const std::string &channel_name)
+{
+	return _channels.find(channel_name) != _channels.end();
+}
+
+void Server::removeChannelIfEmpty(const std::string &channel_name)
+{
+	std::map<std::string, Channel>::iterator it = _channels.find(channel_name);
+	if (it != _channels.end() && it->second.isEmpty())
+	{
+		_channels.erase(it);
+		std::cout << "Empty channel removed: " << channel_name << std::endl;
+	}
 }
 
 // WELCOME MESSAGES

@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:37:38 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/20 21:05:52 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/24 18:16:06 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,9 +101,15 @@ class Server
 			// CLIENT MANAGEMENT
 			void		createClientObject(int client_fd, const std::string &hostname); // Create Client object
 			Client*		findClientByFd(int client_fd);									// Find client by file descriptor
+			Client*		findClientByNick(const std::string &nickname);					// Find client by nickname
 			bool		isNicknameInUse(const std::string &nickname);					// Check if nickname is already taken
 			bool		isValidNickname(const std::string &nickname);					// Validate nickname format
 			
+			// CHANNEL MANAGEMENT
+			Channel*	findOrCreateChannel(const std::string &channel_name);			// Find existing channel or create new one
+			Channel*	findChannel(const std::string &channel_name);					// Find existing channel
+			bool		channelExists(const std::string &channel_name);					// Check if channel exists
+			void		removeChannelIfEmpty(const std::string &channel_name);			// Remove channel if no users
 			
 			// COMMANDS
 			void	PassCommand(int client_fd, const std::vector<std::string> &tokens);
@@ -111,6 +117,7 @@ class Server
 			void	UserCommand(int client_fd, const std::vector<std::string> &tokens);
 			void	QuitCommand(int client_fd, const std::vector<std::string> &tokens);
 			void	JoinCommand(int client_fd, const std::vector<std::string> &tokens);
+			void	PrivmsgCommand(int client_fd, const std::vector<std::string> &tokens);
 
 			// WELCOME MESSAGES
 			void	sendWelcomeMessages(int client_fd);	// Send welcome messages to registered client

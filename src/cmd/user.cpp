@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 17:51:21 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/20 20:36:20 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/24 18:26:35 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void Server::UserCommand(int client_fd, const std::vector<std::string> &tokens)
 {
-	Client *client = findClientByFd(client_fd);
+	Client *client = findClientByFd(client_fd);		// Search a Client
 
 	if (!client)
 	{

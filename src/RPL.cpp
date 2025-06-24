@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 16:29:47 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/20 20:42:57 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/24 19:53:15 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,4 +85,66 @@ std::string RPL::ERR_NICKNAMEINUSE(const std::string &server, const std::string 
 std::string RPL::ERR_NOTREGISTERED(const std::string &server, const std::string &nick)
 {
 	return formatRPL(451, server, nick, ":You have not registered");
+}
+
+// JOIN
+std::string RPL::RPL_NOTOPIC(const std::string &server, const std::string &nick, const std::string &channel)
+{
+	return formatRPL(331, server, nick, channel + " :No topic is set");
+}
+
+std::string RPL::RPL_TOPIC(const std::string &server, const std::string &nick, const std::string &channel, const std::string &topic)
+{
+	return formatRPL(332, server, nick, channel + " :" + topic);
+}
+
+std::string RPL::RPL_NAMREPLY(const std::string &server, const std::string &nick, const std::string &channel, const std::string &names)
+{
+	return formatRPL(353, server, nick, "= " + channel + " :" + names);
+}
+
+std::string RPL::RPL_ENDOFNAMES(const std::string &server, const std::string &nick, const std::string &channel)
+{
+	return formatRPL(366, server, nick, channel + " :End of /NAMES list");
+}
+
+std::string RPL::ERR_NOSUCHCHANNEL(const std::string &server, const std::string &nick, const std::string &channel)
+{
+	return formatRPL(403, server, nick, channel + " :No such channel");
+}
+
+std::string RPL::ERR_CHANNELISFULL(const std::string &server, const std::string &nick, const std::string &channel)
+{
+	return formatRPL(471, server, nick, channel + " :Cannot join channel (+l)");
+}
+
+std::string RPL::ERR_INVITEONLYCHAN(const std::string &server, const std::string &nick, const std::string &channel)
+{
+	return formatRPL(473, server, nick, channel + " :Cannot join channel (+i)");
+}
+
+std::string RPL::ERR_BADCHANNELKEY(const std::string &server, const std::string &nick, const std::string &channel)
+{
+	return formatRPL(475, server, nick, channel + " :Cannot join channel (+k)");
+}
+
+// PRIVMSG
+std::string RPL::ERR_NOSUCHNICK(const std::string &server, const std::string &nick, const std::string &target)
+{
+	return formatRPL(401, server, nick, target + " :No such nick/channel");
+}
+
+std::string RPL::ERR_NOSUCHSERVER(const std::string &server, const std::string &nick, const std::string &servername)
+{
+	return formatRPL(402, server, nick, servername + " :No such server");
+}
+
+std::string RPL::ERR_CANNOTSENDTOCHAN(const std::string &server, const std::string &nick, const std::string &channel)
+{
+	return formatRPL(404, server, nick, channel + " :Cannot send to channel");
+}
+
+std::string RPL::ERR_NOTEXTTOSEND(const std::string &server, const std::string &nick)
+{
+	return formatRPL(412, server, nick, " :No text to send");
 }

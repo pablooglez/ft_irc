@@ -6,14 +6,15 @@
 #    By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/05/29 18:35:50 by pablogon          #+#    #+#              #
-#    Updated: 2025/06/24 19:25:49 by pablogon         ###   ########.fr        #
+#    Updated: 2025/06/25 16:36:09 by pablogon         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = ircserv
 
 SRC = src/Channel.cpp src/Client.cpp src/RPL.cpp src/Server.cpp \
-	src/cmd/quit.cpp src/cmd/pass.cpp src/cmd/nick.cpp src/cmd/join.cpp src/cmd/user.cpp src/cmd/privmsg.cpp\
+	src/cmd/join.cpp src/cmd/nick.cpp src/cmd/pass.cpp src/cmd/privmsg.cpp \
+	src/cmd/quit.cpp src/cmd/user.cpp src/cmd/topic.cpp \
 	src/main.cpp src/utils.cpp
 
 OBJ = $(SRC:.cpp=.o)

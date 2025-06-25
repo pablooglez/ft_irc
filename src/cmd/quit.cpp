@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 18:18:05 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/19 21:31:16 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/25 16:11:41 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,10 +37,45 @@ void	Server::QuitCommand(int client_fd, const std::vector<std::string> &tokens)
 		for (size_t i = 0; i < channels.size(); ++i)
 		{
 			Channel *channel = channels[i];
+			
+			bool was_operator = channel->isOperator(client);	//Verify if the departing customer is an operator before removal
 
 			channel->broadcastToOthers(quit_notification, client);	// Send notification to other channel users (not to the one leaving)
 
 			channel->removeClient(client);	// Remove Client of channel
+
+			if (was_operator && channel->getClientCount() > 0)	// If it was an operator and there are still users, promote the oldest one.
+			{
+				std::vector<Client*> remaining_clients = channel->getClients();
+
+				bool has_operator = true;
+				
+				for (size_t j = 0; j < remaining_clients.size(); ++j)
+				{
+					if (channel->isOperator(remaining_clients[j]))
+					{
+						has_operator = true;
+						break;
+					}
+				}
+
+				if (!has_operator && !remaining_clients.empty())	//If there are no operators, promote to the first (oldest) one.
+				{
+					Client* new_operator = remaining_clients[0];
+					channel->addOperator(new_operator);
+					
+					// Notify operator of promotion
+					std::string mode_msg = ":" + getServerName() + " MODE " + channel->getName() + "+o" + new_operator->getNickName() + "\r\n";
+					
+					// Send to all channel users
+					const std::vector<Client*> &channel_clients = channel->getClients();
+
+					for (std::vector<Client*>::const_iterator it = channel_clients.begin(); it != channel_clients.end(); ++it)
+					{
+						(*it)->sendMessage(mode_msg);
+					}
+				}
+			}
 
 			if (channel->getClientCount() == 0)		// If the channel is empty, delete it from the server.
 			{

@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 16:12:25 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/24 19:17:21 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/25 17:21:05 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,8 @@ class	RPL
 			static std::string ERR_CANNOTSENDTOCHAN(const std::string &server, const std::string &nick, const std::string &channel);	// 404
 			static std::string ERR_NOTEXTTOSEND(const std::string &server, const std::string &nick);									// 412
 
+			// TOPIC
+			static std::string ERR_CHANOPRIVSNEEDED(const std::string &server, const std::string &nick, const std::string &channel);	// 482
 	private:
 			static std::string formatRPL(int code, const std::string &server, const std::string &nick, const std::string &message);
 };

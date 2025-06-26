@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 16:29:47 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/25 17:44:39 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/26 17:47:02 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,4 +153,9 @@ std::string RPL::ERR_NOTEXTTOSEND(const std::string &server, const std::string &
 std::string RPL::ERR_CHANOPRIVSNEEDED(const std::string &server, const std::string &nick, const std::string &channel)
 {
 	return formatRPL(482, server, nick, channel + " :You're not channel operator");
+}
+
+std::string RPL::ERR_NOTONCHANNEL(const std::string &server, const std::string &nick, const std::string &channel)
+{
+	return formatRPL(442, server, nick, channel + " :You're not on that channel");
 }

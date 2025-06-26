@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 16:12:25 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/25 17:21:05 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/26 17:43:32 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ class	RPL
 
 			// TOPIC
 			static std::string ERR_CHANOPRIVSNEEDED(const std::string &server, const std::string &nick, const std::string &channel);	// 482
+			static std::string ERR_NOTONCHANNEL(const std::string &server, const std::string &nick, const std::string &channel);		// 442
 	private:
 			static std::string formatRPL(int code, const std::string &server, const std::string &nick, const std::string &message);
 };

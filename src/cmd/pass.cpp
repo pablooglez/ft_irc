@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 20:29:30 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/21 18:24:56 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/27 20:22:54 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,13 @@ void	Server::PassCommand(int client_fd, const std::vector<std::string> &tokens)
 	if (client->isRegistered())	// Check if it's registered
 	{
 		std::string error = RPL::ERR_ALREADYREGISTERED(getServerName(), client->getNickName());
+		client->sendMessage(error);
+		return;
+	}
+
+	if (client->isAuthenticated())	// Check if already authenticated with PASS
+	{
+		std::string error = RPL::ERR_ALREADYREGISTERED(getServerName(), getClientNick(client_fd));
 		client->sendMessage(error);
 		return;
 	}

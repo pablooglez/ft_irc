@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 17:51:21 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/24 18:26:35 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/27 20:30:32 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void Server::UserCommand(int client_fd, const std::vector<std::string> &tokens)
 		return;
 	}
 
-	if (tokens.size() < 5)	// Check sufficient parameters
+	if (tokens.size() < 2)	// Check sufficient parameters (only username required)
 	{
 		std::string error = RPL::ERR_NEEDMOREPARAMS(getServerName(), getClientNick(client_fd), "USER");
 		client->sendMessage(error);
@@ -50,21 +50,10 @@ void Server::UserCommand(int client_fd, const std::vector<std::string> &tokens)
 		return;
 	}
 
-	std::string username = tokens[1];	// Extract parameters
-	std::string realname = tokens[4];
+	std::string username = tokens[1];	// Extract username (only first parameter)
 
-	if (!realname.empty() && realname[0] == ':')	// handle realname that can start with ‘:’ and contain spaces
-	{
-		realname = realname.substr(1);
-	}
-
-	for (size_t i = 5; i < tokens.size(); ++i)	// Join remaining tokens for complete realname
-	{
-		realname += " " + tokens[i];
-	}
-
-	// Validate that they are not empty
-	if (username.empty() || realname.empty())
+	// Validate that username is not empty
+	if (username.empty())
 	{
 		std::string error = RPL::ERR_NEEDMOREPARAMS(getServerName(), getClientNick(client_fd), "USER");
 		client->sendMessage(error);

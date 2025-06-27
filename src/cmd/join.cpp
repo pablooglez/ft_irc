@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 12:15:43 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/24 19:38:13 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/27 18:57:40 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,10 +38,11 @@ void Server::JoinCommand(int client_fd, const std::vector<std::string> &tokens)
 
 	std::string channel_name = tokens[1];
 	
-	// Ensure channel name starts with #
-	if (channel_name[0] != '#')
+	if (channel_name.empty() || channel_name[0] != '#')	// Channel name MUST start with # - no auto-correction
 	{
-		channel_name = "#" + channel_name;
+		std::string error = RPL::ERR_NOSUCHCHANNEL(getServerName(), client->getNickName(), channel_name);
+		client->sendMessage(error);
+		return;
 	}
 
 	// Validate channel name
@@ -115,7 +116,10 @@ void Server::JoinCommand(int client_fd, const std::vector<std::string> &tokens)
 	const std::vector<Client*> &channel_clients = channel->getClients();
 	for (std::vector<Client*>::const_iterator it = channel_clients.begin(); it != channel_clients.end(); ++it)
 	{
-		(*it)->sendMessage(join_response);
+		if ((*it)->getFd() != client_fd)
+		{
+			(*it)->sendMessage(join_response);
+		}
 	}
 	
 	// Send topic information

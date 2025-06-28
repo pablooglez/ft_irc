@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   RPL.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 16:12:25 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/20 20:43:16 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/28 22:05:24 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,10 @@ class	RPL
 
 			// USER
 			static std::string ERR_NOTREGISTERED(const std::string &server, const std::string &nick);	// 451
+
+			//INFO
+			static std::string RPL_INFO(const std::string &server, const std::string &nick, const std::string &info);
+			static std::string RPL_ENDOFINFO(const std::string &serverName, const std::string &nickname, const std::string &message);
 
 	private:
 			static std::string formatRPL(int code, const std::string &server, const std::string &nick, const std::string &message);

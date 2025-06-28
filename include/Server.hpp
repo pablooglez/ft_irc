@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:37:38 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/24 13:52:15 by albelope         ###   ########.fr       */
+/*   Updated: 2025/06/28 20:35:08 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,6 +120,11 @@ class Server
 			void	UserCommand(int client_fd, const std::vector<std::string> &tokens);
 			void	QuitCommand(int client_fd, const std::vector<std::string> &tokens);
 			void	JoinCommand(int client_fd, const std::vector<std::string> &tokens);
+
+
+
+
+			void 	commandInfo(int client_fd, std::vector<std::string> &tokens);
 
 			// WELCOME MESSAGES
 			void	sendWelcomeMessages(int client_fd);	// Send welcome messages to registered client

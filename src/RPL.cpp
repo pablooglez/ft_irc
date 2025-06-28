@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   RPL.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 16:29:47 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/20 20:42:57 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/28 22:05:48 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,3 +86,24 @@ std::string RPL::ERR_NOTREGISTERED(const std::string &server, const std::string 
 {
 	return formatRPL(451, server, nick, ":You have not registered");
 }
+
+
+
+
+//////////////////////////////
+
+
+//INFO
+
+std::string RPL::RPL_INFO(const std::string &server, const std::string &nick, const std::string &info)
+{
+	return formatRPL(371, server, nick, ":" + info);
+}
+
+#include "../include/RPL.hpp"
+
+std::string RPL::RPL_ENDOFINFO(const std::string &serverName, const std::string &nickname, const std::string &message)
+{
+    return ":" + serverName + " 374 " + nickname + " :" + message + "\r\n";
+}
+

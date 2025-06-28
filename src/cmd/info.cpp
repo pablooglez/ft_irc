@@ -6,14 +6,14 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 20:27:12 by albelope          #+#    #+#             */
-/*   Updated: 2025/06/28 22:12:25 by albelope         ###   ########.fr       */
+/*   Updated: 2025/06/28 22:40:42 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/Server.hpp"
 
 
-void Server::commandInfo(int client_fd, std::vector<std::string> &tokens) {
+void Server::InfoCommand(int client_fd, std::vector<std::string> &tokens) {
     
     Client* client = findClientByFd(client_fd);
     

@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 17:05:24 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/24 13:59:45 by albelope         ###   ########.fr       */
+/*   Updated: 2025/06/28 23:19:51 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -407,9 +407,10 @@ void	Server::parceIRCMessage(int client_fd, const std::string &message, char del
 	}
 	else if (command == "JOIN")
 		JoinCommand(client_fd, tokens);
-	/*else if (command == "KICK")
+	//else if (command == "KICK")
 	else if (command == "INFO")
-	else if (command == "TOPIC")*/
+		InfoCommand(client_fd, tokens);
+	//else if (command == "TOPIC")*/
 	else if (command == "PRIVMSG")
 		PrivmsgCommand(client_fd, tokens);
 	/*else if (command == "INVITE")
@@ -532,4 +533,6 @@ bool Server::channelExists(const std::string& name)
 		return false;
 		
 	return _channels.find(name) != _channels.end();
-}
+}// Sirve solo para saber si el canal existe. Es casi inútil porque findChannelByName ya lo hace mejor.
+// Puede servir para logs o cosas rápidas donde no necesitas el canal.
+

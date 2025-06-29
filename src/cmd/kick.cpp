@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 22:44:58 by albelope          #+#    #+#             */
-/*   Updated: 2025/06/28 23:29:39 by albelope         ###   ########.fr       */
+/*   Updated: 2025/06/29 14:46:00 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,9 @@
 
 void    Server::KickCommand(int client_fd, std::vector<std::string> &tokens) {
 
-    Client* client = findClientByFd(client_fd);
+    Client* kickingClient = findClientByFd(client_fd);
 
-    if (!client->isRegistered()) {
+    if (!kickingClient->isRegistered()) {
         std::cout << "Error : Not registered" << std::endl;
         return ;
     }
@@ -27,44 +27,50 @@ void    Server::KickCommand(int client_fd, std::vector<std::string> &tokens) {
         return ;
     }
 
-    std::string channel = tokens[1];
-    std::string targetUser = tokens[2];
-    std::string msg;
+    std::string channelName = tokens[1];
+    std::string nickToKick = tokens[2];
+    std::string msg = "No reason";
 
     if (tokens.size() == 4)
         msg = tokens[3];
 
-    Channel* targetChannel = findChannelByName(channel);
+    Channel* channelOfKick = findChannelByName(channelName);
 
-    if (!targetChannel) {
+    if (!channelOfKick) {
         std::cout << "Error: channel not exsits" << std::endl;
         return ;
     }
 
-    if (!targetChannel->isOperator(client)) {
+    if (!channelOfKick->isOperator(kickingClient)) {
         std::cout << "Error : is not operator" << std::endl;
         return ;
     }
     
-    if (!targetChannel->hasClient(targetUser)) {
+    if (!channelOfKick->hasClient(nickToKick)) {
         std::cout << "Error : user not found" << std::endl;
         return ;
     }
 
-    Client *targetClient = findClientByNickname(targetUser);
+    Client *clientToKick = findClientByNickname(nickToKick);
 
- 
-    
+    if (!channelOfKick->canKick(kickingClient, clientToKick)) {
+        std::cout << "Error : cannot kick this user" << std::endl;
+        return ;
+    }
 
+    std::string KickMessage;
+
+    KickMessage = ":" + kickingClient->getNickName() + " KICK " + channelName +  " " + nickToKick; 
+
+    if (!msg.empty())
+        KickMessage = KickMessage + " :" + msg;
     
+    channelOfKick->broadcast(KickMessage, NULL);
+    
+     if (channelOfKick->kickUser(kickingClient, clientToKick)) {
+        clientToKick->removeChannel(channelOfKick);
         
-    
-
-    
-
-    
-    
-
-    
-    
+        if (channelOfKick->isEmpty()) 
+            _channels.erase(channelName);  
+     }
 }

@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 16:12:25 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/26 17:43:32 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/28 16:19:48 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <iomanip>
 
 class	RPL
 {

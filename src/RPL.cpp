@@ -6,17 +6,18 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 16:29:47 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/26 17:47:02 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/28 16:19:53 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/RPL.hpp"
 
+
 std::string RPL::formatRPL(int code, const std::string &server, const std::string &nick,const std::string &message)
 {
 	std::ostringstream oss;
 
-	oss << ":" << server << " " << code << " " << nick << " " << message << "\r\n";
+	oss << ":" << server << " " << std::setfill('0') << std::setw(3) << code << " " << nick << " " << message << "\r\n";
 	
 	return (oss.str());
 }

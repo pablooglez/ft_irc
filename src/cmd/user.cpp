@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 17:51:21 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/27 20:30:32 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/28 16:18:32 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void Server::UserCommand(int client_fd, const std::vector<std::string> &tokens)
 		return;
 	}
 
-	if (tokens.size() < 2)	// Check sufficient parameters (only username required)
+	if (tokens.size() < 5)	// Check sufficient parameters: USER <username> <hostname> <servername> <realname>
 	{
 		std::string error = RPL::ERR_NEEDMOREPARAMS(getServerName(), getClientNick(client_fd), "USER");
 		client->sendMessage(error);

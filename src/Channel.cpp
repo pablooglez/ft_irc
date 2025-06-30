@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 16:23:01 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/19 15:50:32 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/27 21:06:29 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -472,7 +472,7 @@ std::string Channel::getChannelInfo() const
 bool Channel::isValidChannelName(const std::string& name)
 {
 	// The channel name must start with # and be at least 2 characters long.
-	if (name.length() < 2 || name[0] != '#')
+	if (name.length() < 2 || name[0] != '#' )
 		return false;
 	
 	// Verify valid characters (no spaces, no commas, no control characters)

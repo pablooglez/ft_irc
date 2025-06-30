@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 16:29:47 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/28 22:05:48 by albelope         ###   ########.fr       */
+/*   Updated: 2025/06/30 13:35:45 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,5 +105,16 @@ std::string RPL::RPL_INFO(const std::string &server, const std::string &nick, co
 std::string RPL::RPL_ENDOFINFO(const std::string &serverName, const std::string &nickname, const std::string &message)
 {
     return ":" + serverName + " 374 " + nickname + " :" + message + "\r\n";
+}
+
+
+std::string RPL::RPL_LIST(const std::string &server, const std::string &nick, const std::string &channel, const std::string &userCount, const std::string &topic)
+{
+    return formatRPL(322, server, nick, channel + " " + userCount + " :" + topic);
+}
+
+std::string RPL::RPL_LISTEND(const std::string &server, const std::string &nick)
+{
+    return formatRPL(323, server, nick, ":End of /LIST");
 }
 

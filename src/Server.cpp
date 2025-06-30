@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 17:05:24 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/30 12:29:39 by albelope         ###   ########.fr       */
+/*   Updated: 2025/06/30 13:06:39 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -415,7 +415,8 @@ void	Server::parceIRCMessage(int client_fd, const std::string &message, char del
 		PrivmsgCommand(client_fd, tokens);
 	else if (command == "INVITE")
 		InviteCommand(client_fd, tokens);
-	//else if (command == "LIST")
+	else if (command == "LIST")
+		ListCommand(client_fd, tokens);
 	else if (command == "NAMES")
 		NamesCommand(client_fd, tokens);
 	//else if (command == "MODE")*/

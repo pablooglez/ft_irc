@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 16:12:25 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/30 12:57:43 by albelope         ###   ########.fr       */
+/*   Updated: 2025/06/30 13:35:30 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,11 @@ class	RPL
 
 			static std::string RPL_ENDOFNAMES(const std::string& server, const std::string& nick,
                                   const std::string& channel); // 366
+
+			// LIST
+			static std::string RPL_LIST(const std::string &server, const std::string &nick, const std::string &channel, const std::string &userCount, const std::string &topic);
+			static std::string RPL_LISTEND(const std::string &server, const std::string &nick);
+
 
 			
 	private:

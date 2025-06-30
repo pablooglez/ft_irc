@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:37:38 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/28 22:51:54 by albelope         ###   ########.fr       */
+/*   Updated: 2025/06/30 10:25:34 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,6 +127,8 @@ class Server
 			void 	InfoCommand(int client_fd, std::vector<std::string> &tokens);
 
 			void    KickCommand(int client_fd, std::vector<std::string> &tokens);
+
+			void	InviteCommand(int client_fd, std::vector<std::string> &tokens);
 
 			// WELCOME MESSAGES
 			void	sendWelcomeMessages(int client_fd);	// Send welcome messages to registered client

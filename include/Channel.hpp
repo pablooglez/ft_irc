@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 12:36:00 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/24 12:45:55 by albelope         ###   ########.fr       */
+/*   Updated: 2025/06/30 13:53:31 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ class Channel
 																		// EJ: _inviteOnly = true bloquea JOIN a menos que usuario esté en _invited
 		bool						_topicRestricted;				// Topic protection flag (MODE +t) - Only operators can change topic when true
 																		// EJ: _topicRestricted = true permite solo a ops usar comando TOPIC
-		int							_userLimit;						// Maximum users allowed (MODE +l) - 0 or negative means no limit
+		size_t							_userLimit;						// Maximum users allowed (MODE +l) - 0 or negative means no limit
 																		// EJ: _userLimit = 50 bloquea JOIN cuando ya hay 50 usuarios presentes
 		bool						_hasPassword;					// Flag indicating if password is set - Avoids confusion between empty string and no password
 																		// EJ: _hasPassword = true indica que el canal tiene contraseña, incluso si _key está vacío. _hasPassword = false significa que no hay contraseña.
@@ -195,16 +195,16 @@ class Channel
 		//=====================================================================================
 		// === FUTURES (CHECK IF WE NEEDED AND WE ARE NOT TIRED OF FT_IRC)=====
 				//INFO TIMESTAMPS-----
-		time_t							_creationTime;					// Channel creation timestamp - Used for channel age and INFO responses
+		//time_t							_creationTime;					// Channel creation timestamp - Used for channel age and INFO responses
                                                                				 // EJ: _creationTime = time(NULL) guarda cuándo se creó el canal
-		time_t							_topicTime;						// Topic change timestamp - Shows when topic was last modified
+		//time_t							_topicTime;						// Topic change timestamp - Shows when topic was last modified
                                                                				 // EJ: _topicTime = time(NULL) actualizado cuando se cambia el topic
-		std::string						_topicSetBy;					// Who set the current topic - Shows nickname of user who set topic
+		//std::string						_topicSetBy;					// Who set the current topic - Shows nickname of user who set topic
                                                                 			// EJ: _topicSetBy = "alice" muestra quién estableció el topic actual
 				//FLOOD PROTECTION ANTI SPAM MESSAGES---
-		int								_messageRateLimit;				// Messages per second limit - Prevents spam/flooding
+		//int								_messageRateLimit;				// Messages per second limit - Prevents spam/flooding
                                                                 			// EJ: _messageRateLimit = 5 permite máximo 5 mensajes por segundo
-		std::map<Client*, time_t>		_lastMessageTime;				// Last message time per user - Used for rate limiting
+		//std::map<Client*, time_t>		_lastMessageTime;				// Last message time per user - Used for rate limiting
                                                                 			// EJ: _lastMessageTime[cliente] = time(NULL) para control de spam
 
 				//CHEK BAN OPTIONS LATER																		

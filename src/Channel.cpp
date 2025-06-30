@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 12:48:09 by albelope          #+#    #+#             */
-/*   Updated: 2025/06/24 12:45:50 by albelope         ###   ########.fr       */
+/*   Updated: 2025/06/30 13:55:33 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -369,17 +369,11 @@ bool	Channel::canJoin(Client* client, const std::string& password) const {
 }
 
 bool	Channel::channelIsEmpty() const{
-	if (!_members.empty())
-		return false;
-	if (_members.empty())
-		return true;
+	return _members.empty();
 }
 // dejar o simplificar , solo sirven por sintaxis funcional
 bool	Channel::isEmpty() const {
-	if (!_members.empty())
-		return false;
-	if (_members.empty())
-		return true;
+	return _members.empty();
 }
 
 bool	Channel::isFull() const {
@@ -479,6 +473,7 @@ bool	Channel::canSetTopic(Client* client) const {
 
 
 void	Channel::broadcast(const std::string& message, Client* sender) const {
+	(void)sender; //de momento
 	for (size_t i = 0; i < _members.size(); i++) {
 		if (_members[i] == NULL)
 			continue ;

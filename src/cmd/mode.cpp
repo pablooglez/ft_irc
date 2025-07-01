@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 13:02:04 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/01 13:45:07 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/01 13:49:50 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,7 +135,7 @@ void	Server::ModesCommand(int client_fd, std::vector<std::string> &tokens) {
 					break;
 				
 					default:
-						handleUknownMode(channel, client, checkMode);
+						handleUnknownMode(channel, client, checkMode);
 						return;
 				}
 			}
@@ -150,9 +150,8 @@ void	Server::ModesCommand(int client_fd, std::vector<std::string> &tokens) {
 
 /*[X] Validaciones básicas
   [X] Consulta de modos
-  [ ] (Opcional) RPL_CREATIONTIME
-  [ ] Comprobar si el cliente es operador
-  [ ] Leer y analizar el string de modos
+  [X] Comprobar si el cliente es operador
+  [X] Leer y analizar el string de modos
   [ ] Verificar modos válidos
   [ ] Verificar parámetros necesarios
   [ ] Aplicar los cambios

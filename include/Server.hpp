@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:37:38 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/30 13:58:37 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/01 13:49:13 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,6 +135,13 @@ class Server
 			void	ListCommand(int client_fd, std::vector<std::string> &tokens);
 
 			void	ModesCommand(int client_fd, std::vector<std::string> &tokens);
+
+			void	handleInvideMode(Channel *channel, Client *client, bool checkMode);
+			void	handleTopicMode(Channel *channel, Client *client, bool checkMode);
+			void	handleLimitMode(Channel *channel, Client *client, bool checkMode, const std::string& parameter);
+			void	handleKeyMode(Channel *channel, Client *client, bool checkMode, const std::string& parameter);
+			void	handleUnknownMode(Channel *channel, Client *client, bool checkMode);
+			
 
 			
 			// WELCOME MESSAGES

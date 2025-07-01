@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 16:12:25 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/30 13:35:30 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/01 11:15:04 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,12 @@ class	RPL
 			static std::string RPL_LIST(const std::string &server, const std::string &nick, const std::string &channel, const std::string &userCount, const std::string &topic);
 			static std::string RPL_LISTEND(const std::string &server, const std::string &nick);
 
+			
 
+
+			//MODES
+			
+			static std::string RPL_CHANNELMODEIS(const std::string &server, const std::string &nick, const std::string &channel, const std::string &modes);
 			
 	private:
 			static std::string formatRPL(int code, const std::string &server, const std::string &nick, const std::string &message);

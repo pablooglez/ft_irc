@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 16:29:47 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/30 13:35:45 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/01 11:25:35 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,5 +116,15 @@ std::string RPL::RPL_LIST(const std::string &server, const std::string &nick, co
 std::string RPL::RPL_LISTEND(const std::string &server, const std::string &nick)
 {
     return formatRPL(323, server, nick, ":End of /LIST");
+}
+
+
+
+
+
+//MODES
+
+std::string RPL::RPL_CHANNELMODEIS(const std::string &server, const std::string &nick, const std::string &channel, const std::string &modes) {
+	return formatRPL(324, server, nick, channel + " "  + modes);
 }
 

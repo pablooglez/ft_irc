@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 13:02:04 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/01 13:49:50 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/02 14:29:28 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,61 @@
 
 
 void	Server::handleInvideMode(Channel *channel, Client *client, bool checkMode) {
+
+	if (checkMode == true)
+		channel->setInviteOnly(true);
+	else
+		channel->setInviteOnly(false);
+
+	std::string modeInvMessage;
+	modeInvMessage = ":" + client->getNickName() + " MODE " + channel->getChannelName() + " ";
+	if (checkMode)
+		modeInvMessage = modeInvMessage + "+i";
+	else
+		modeInvMessage = modeInvMessage + "-i";
 	
+
+	channel->broadcast(modeInvMessage, NULL);
+	client->sendMessage(RPL::RPL_CHANNELMODEIS(getServerName(), client->getNickName(),
+									channel->getChannelName(), channel->getModes()));
 }
+
+
 void	Server::handleTopicMode(Channel *channel, Client *client, bool checkMode) {
-	
+	if (checkMode == true)
+		channel->setTopicRestricted(true);
+	else	
+		channel->setTopicRestricted(false);
+
+	std::string modeTopicMessage;
+	modeTopicMessage = ":" + client->getNickName() + " MODE " + channel->getChannelName() + " ";
+	if (checkMode)
+		modeTopicMessage = modeTopicMessage + "+t";
+	else
+		modeTopicMessage = modeTopicMessage + "-t";
+
+	channel->broadcast(modeTopicMessage, NULL);
+	client->sendMessage(RPL::RPL_CHANNELMODEIS(getServerName(), client->getNickName(),
+									channel->getChannelName(), channel->getModes()));
 }
+
+
 void	Server::handleLimitMode(Channel *channel, Client *client, bool checkMode,
 						const std::string& parameter) {
+	int newLimit = std::atoi(parameter.c_str());
+	if (checkMode == true) {
+		channel->setUserLimit(newLimit);
+	}
+	else
+		channel->setUserLimit(0);
 	
 }
+
 void	Server::handleKeyMode(Channel *channel, Client *client, bool checkMode,
 						const std::string& parameter) {
 	
 }
+
 void	Server::handleUnknownMode(Channel *channel, Client *client, bool checkMode) {
 	
 }
@@ -134,17 +176,13 @@ void	Server::ModesCommand(int client_fd, std::vector<std::string> &tokens) {
 					}
 					break;
 				
-					default:
-						handleUnknownMode(channel, client, checkMode);
-						return;
+				default:
+					handleUnknownMode(channel, client, checkMode);
+					return; 
 				}
 			}
 		}
 	}
-
-
-
-
 
 
 

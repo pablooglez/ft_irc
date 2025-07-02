@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 12:36:00 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/30 13:53:31 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/02 17:51:02 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ class Channel
 																		// EJ: _inviteOnly = true bloquea JOIN a menos que usuario esté en _invited
 		bool						_topicRestricted;				// Topic protection flag (MODE +t) - Only operators can change topic when true
 																		// EJ: _topicRestricted = true permite solo a ops usar comando TOPIC
-		size_t							_userLimit;						// Maximum users allowed (MODE +l) - 0 or negative means no limit
+		size_t						_userLimit;						// Maximum users allowed (MODE +l) - 0 or negative means no limit
 																		// EJ: _userLimit = 50 bloquea JOIN cuando ya hay 50 usuarios presentes
 		bool						_hasPassword;					// Flag indicating if password is set - Avoids confusion between empty string and no password
 																		// EJ: _hasPassword = true indica que el canal tiene contraseña, incluso si _key está vacío. _hasPassword = false significa que no hay contraseña.
@@ -207,5 +207,12 @@ class Channel
 		//std::map<Client*, time_t>		_lastMessageTime;				// Last message time per user - Used for rate limiting
                                                                 			// EJ: _lastMessageTime[cliente] = time(NULL) para control de spam
 
-				//CHEK BAN OPTIONS LATER																		
+				//CHEK BAN OPTIONS LATER	
+				
+				
+
+
+		//PABLO FUN 
+
+		bool							removeClient(Client *client);
 };

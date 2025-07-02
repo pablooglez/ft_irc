@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:37:38 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/01 13:49:13 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/02 17:56:00 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,10 +107,12 @@ class Server
 			void		PrivmsgCommand(int client_fd, const std::vector<std::string> &tokens);
 
 
+			// CHANNEL MANAGEMENT
+			Channel*	findOrCreateChannel(const std::string &channel_name);			// Find existing channel or create new one
+			Channel*	findChannel(const std::string &channel_name);					// Find existing channel
+			bool		channelExists(const std::string &channel_name);					// Check if channel exists
+			void		removeChannelIfEmpty(const std::string &channel_name);			// Remove channel if no users
 			
-
-
-
 
 			
 			
@@ -120,7 +122,8 @@ class Server
 			void	UserCommand(int client_fd, const std::vector<std::string> &tokens);
 			void	QuitCommand(int client_fd, const std::vector<std::string> &tokens);
 			void	JoinCommand(int client_fd, const std::vector<std::string> &tokens);
-
+			//void	PrivmsgCommand(int client_fd, const std::vector<std::string> &tokens);
+			void	TopicCommand(int client_fd, const std::vector<std::string> &tokens);
 
 
 
@@ -167,7 +170,7 @@ class Server
 			
 			Client*		findClientByNickname(const std::string& nickname);			// PENDIENTE: Find clientE by nickname - Returns pointer or nullptr
 			Channel*	findChannelByName(const std::string& name);					// PENDIENTE: Find channel by name - Returns pointer or nullptr  
-			bool		channelExists(const std::string& name);						// PENDIENTE: Checker if channel exists - Returns true/false
+			//bool		channelExists(const std::string& name);						// PENDIENTE: Checker if channel exists - Returns true/false
 								
 			//======================================================================================
 };

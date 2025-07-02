@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 16:12:25 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/01 11:15:04 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/02 17:55:27 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,26 @@
 class	RPL
 {
 	public:
+
+			// JOIN
+			static std::string RPL_NOTOPIC(const std::string &server, const std::string &nick, const std::string &channel);								// 331
+			static std::string RPL_TOPIC(const std::string &server, const std::string &nick, const std::string &channel, const std::string &topic);		// 332
+			static std::string RPL_NAMREPLY(const std::string &server, const std::string &nick, const std::string &channel, const std::string &names);	// 353
+			static std::string RPL_ENDOFNAMES(const std::string &server, const std::string &nick, const std::string &channel);							// 366
+			static std::string ERR_NOSUCHCHANNEL(const std::string &server, const std::string &nick, const std::string &channel);						// 403
+			static std::string ERR_CHANNELISFULL(const std::string &server, const std::string &nick, const std::string &channel);						// 471
+			static std::string ERR_INVITEONLYCHAN(const std::string &server, const std::string &nick, const std::string &channel);						// 473
+			static std::string ERR_BADCHANNELKEY(const std::string &server, const std::string &nick, const std::string &channel);						// 475
+
+			// PRIVMSG
+			static std::string ERR_NOSUCHNICK(const std::string &server, const std::string &nick, const std::string &target);			// 401
+			static std::string ERR_NOSUCHSERVER(const std::string &server, const std::string &nick, const std::string &servername);		// 402
+			static std::string ERR_CANNOTSENDTOCHAN(const std::string &server, const std::string &nick, const std::string &channel);	// 404
+			static std::string ERR_NOTEXTTOSEND(const std::string &server, const std::string &nick);									// 412
+
+			// TOPIC
+			static std::string ERR_CHANOPRIVSNEEDED(const std::string &server, const std::string &nick, const std::string &channel);	// 482
+			static std::string ERR_NOTONCHANNEL(const std::string &server, const std::string &nick, const std::string &channel);		// 442
 	
 			// WELCOME MESSAGES
 			static std::string RPL_WELCOME(const std::string &server, const std::string &nick, const std::string &user, const std::string &host);	// 001
@@ -44,11 +64,11 @@ class	RPL
 
 
 			// NAMES
-			static std::string RPL_NAMREPLY(const std::string& server, const std::string& nick,
-                                const std::string& channel, const std::string& userList); // 353
+			//static std::string RPL_NAMREPLY(const std::string& server, const std::string& nick,
+         	//                   const std::string& channel, const std::string& userList); // 353
 
-			static std::string RPL_ENDOFNAMES(const std::string& server, const std::string& nick,
-                                  const std::string& channel); // 366
+			//static std::string RPL_ENDOFNAMES(const std::string& server, const std::string& nick,
+            //                      const std::string& channel); // 366
 
 			// LIST
 			static std::string RPL_LIST(const std::string &server, const std::string &nick, const std::string &channel, const std::string &userCount, const std::string &topic);

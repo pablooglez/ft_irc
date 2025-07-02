@@ -3,17 +3,20 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+         #
+#    By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/05/29 18:35:50 by pablogon          #+#    #+#              #
-#    Updated: 2025/06/18 16:23:36 by pablogon         ###   ########.fr        #
+#    Updated: 2025/07/02 18:15:25 by albelope         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = ircserv
 
 SRC = src/Channel.cpp src/Client.cpp src/Server.cpp src/main.cpp src/utils.cpp \
-	src/cmd/quit.cpp src/cmd/pass.cpp src/cmd/nick.cpp src/cmd/join.cpp
+	src/cmd/quit.cpp src/cmd/pass.cpp src/cmd/nick.cpp src/cmd/join.cpp \
+	src/cmd/names.cpp src/cmd/user.cpp src/cmd/privmsg.cpp src/cmd/topic.cpp \
+	src/cmd/kick.cpp src/cmd/info.cpp src/cmd/list.cpp src/cmd/invite.cpp \
+	src/cmd/mode.cpp
 
 OBJ = $(SRC:.cpp=.o)
 

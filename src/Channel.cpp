@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 12:48:09 by albelope          #+#    #+#             */
-/*   Updated: 2025/06/30 13:55:33 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/02 17:51:24 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -740,4 +740,28 @@ bool	Channel::setUserLimit(int limit) {
     return true;
 }
 
+
+
+
+//pablo funcion para una cosa suya
+
+bool Channel::removeClient(Client *client)
+{
+	if (!client)
+		return false;
+	
+	// Search and delete clients
+	std::vector<Client*>::iterator it = std::find(this->_members.begin(), this->_members.end(), client);
+	if (it != this->_members.end())
+	{
+		this->_members.erase(it);
+
+		removeOperator(client);
+		removeInvited(client);
+
+		return true;
+	}
+	
+	return false;
+}
 

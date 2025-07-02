@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 17:05:24 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/30 13:58:32 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/02 17:55:12 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -531,12 +531,61 @@ Channel* Server::findChannelByName(const std::string& name)
 	return NULL;
 }
 
-bool Server::channelExists(const std::string& name)
+/*bool Server::channelExists(const std::string& name)
 {
 	if (name.empty())
 		return false;
 		
 	return _channels.find(name) != _channels.end();
-}// Sirve solo para saber si el canal existe. Es casi inútil porque findChannelByName ya lo hace mejor.
+}*/// Sirve solo para saber si el canal existe. Es casi inútil porque findChannelByName ya lo hace mejor.
 // Puede servir para logs o cosas rápidas donde no necesitas el canal.
 
+
+
+
+
+
+
+
+//NEW CODE OF PABLO
+
+// CHANNEL MANAGEMENT FUNCTIONS
+
+Channel* Server::findOrCreateChannel(const std::string &channel_name)
+{
+	std::map<std::string, Channel>::iterator it = _channels.find(channel_name);
+	if (it != _channels.end())
+	{
+		return &(it->second);
+	}
+	
+	// Create new channel
+	Channel new_channel(channel_name);
+	_channels[channel_name] = new_channel;
+	std::cout << "New channel created: " << channel_name << std::endl;
+	
+	return &_channels[channel_name];
+}
+
+Channel* Server::findChannel(const std::string &channel_name)
+{
+	std::map<std::string, Channel>::iterator it = _channels.find(channel_name);
+	if (it != _channels.end())
+		return &(it->second);
+	return NULL;
+}
+
+bool Server::channelExists(const std::string &channel_name)
+{
+	return _channels.find(channel_name) != _channels.end();
+}
+
+void Server::removeChannelIfEmpty(const std::string &channel_name)
+{
+	std::map<std::string, Channel>::iterator it = _channels.find(channel_name);
+	if (it != _channels.end() && it->second.isEmpty())
+	{
+		_channels.erase(it);
+		std::cout << "Empty channel removed: " << channel_name << std::endl;
+	}
+}

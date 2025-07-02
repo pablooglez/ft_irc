@@ -6,7 +6,7 @@
 #    By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/05/29 18:35:50 by pablogon          #+#    #+#              #
-#    Updated: 2025/07/02 18:15:25 by albelope         ###   ########.fr        #
+#    Updated: 2025/07/02 18:50:54 by albelope         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ SRC = src/Channel.cpp src/Client.cpp src/Server.cpp src/main.cpp src/utils.cpp \
 	src/cmd/quit.cpp src/cmd/pass.cpp src/cmd/nick.cpp src/cmd/join.cpp \
 	src/cmd/names.cpp src/cmd/user.cpp src/cmd/privmsg.cpp src/cmd/topic.cpp \
 	src/cmd/kick.cpp src/cmd/info.cpp src/cmd/list.cpp src/cmd/invite.cpp \
-	src/cmd/mode.cpp
+	src/RPL.cpp
 
 OBJ = $(SRC:.cpp=.o)
 

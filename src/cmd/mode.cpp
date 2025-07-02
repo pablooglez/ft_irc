@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 13:02:04 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/02 14:29:28 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/02 18:21:29 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,15 +61,24 @@ void	Server::handleLimitMode(Channel *channel, Client *client, bool checkMode,
 	}
 	else
 		channel->setUserLimit(0);
+	(void)client;
 	
 }
 
 void	Server::handleKeyMode(Channel *channel, Client *client, bool checkMode,
 						const std::string& parameter) {
+		(void)channel;
+		(void)client;
+		(void)checkMode;
+		(void)parameter;
+		
 	
 }
 
 void	Server::handleUnknownMode(Channel *channel, Client *client, bool checkMode) {
+	(void)channel;
+		(void)client;
+		(void)checkMode;
 	
 }
 

@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 20:27:12 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/03 11:06:38 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/03 16:43:51 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ std::string theserverName   = getServerName();
 
 client->sendMessage(RPL::RPL_INFO(theserverName, theNickName, "==================================================================="));
 client->sendMessage(RPL::RPL_INFO(theserverName, theNickName, "|                           FT_IRC SERVER                           |"));
-client->sendMessage(RPL::RPL_INFO(theserverName, theNickName, "|                        42 Telefonica Project                       |"));
+client->sendMessage(RPL::RPL_INFO(theserverName, theNickName, "|                        42 Telefonica Project                      |"));
 client->sendMessage(RPL::RPL_INFO(theserverName, theNickName, "==================================================================="));
 
 std::stringstream port_ss;

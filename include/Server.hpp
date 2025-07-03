@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:37:38 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/02 17:56:00 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/03 10:38:47 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ extern int	g_global;
 # include "Client.hpp"
 # include "Channel.hpp"
 # include "RPL.hpp"
+
 
 class Client;
 class Channel;

@@ -6,7 +6,7 @@
 #    By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/05/29 18:35:50 by pablogon          #+#    #+#              #
-#    Updated: 2025/07/02 18:50:54 by albelope         ###   ########.fr        #
+#    Updated: 2025/07/03 10:31:23 by albelope         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,14 +16,14 @@ SRC = src/Channel.cpp src/Client.cpp src/Server.cpp src/main.cpp src/utils.cpp \
 	src/cmd/quit.cpp src/cmd/pass.cpp src/cmd/nick.cpp src/cmd/join.cpp \
 	src/cmd/names.cpp src/cmd/user.cpp src/cmd/privmsg.cpp src/cmd/topic.cpp \
 	src/cmd/kick.cpp src/cmd/info.cpp src/cmd/list.cpp src/cmd/invite.cpp \
-	src/RPL.cpp
+	src/RPL.cpp src/cmd/mode.cpp
 
 OBJ = $(SRC:.cpp=.o)
 
 RM = rm -f
 
 CC = c++
-CPPFLAGS = -Wall -Wextra -Werror -std=c++98 #-fsanitize=address
+CPPFLAGS = -Wall -Wextra -Werror -std=c++98 
 
 #-------COLORS---------#
 BOLD	:= \033[1m

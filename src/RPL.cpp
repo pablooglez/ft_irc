@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 16:29:47 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/02 18:33:44 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/03 11:45:18 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,4 +181,13 @@ std::string RPL::RPL_INFO(const std::string &server, const std::string &nick, co
 std::string RPL::RPL_ENDOFINFO(const std::string &server, const std::string &nick, const std::string &message)
 {
     return formatRPL(374, server, nick, message);
+}
+
+
+
+
+
+
+std::string RPL::ERR_UNKNOWNMODE(const std::string& server, const std::string& nick, const std::string& modechar) {
+    return ":" + server + " 472 " + nick + " " + modechar + " :is unknown mode char to me\r\n";
 }

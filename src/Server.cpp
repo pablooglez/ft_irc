@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 17:05:24 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/02 18:36:01 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/03 10:19:55 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -407,10 +407,12 @@ void	Server::parceIRCMessage(int client_fd, const std::string &message, char del
 	}
 	else if (command == "JOIN")
 		JoinCommand(client_fd, tokens);
-	//else if (command == "KICK")
+	else if (command == "KICK")
+		KickCommand(client_fd, tokens);
 	else if (command == "INFO")
 		InfoCommand(client_fd, tokens);
-	//else if (command == "TOPIC")*/
+	else if (command == "TOPIC")
+		TopicCommand(client_fd, tokens);
 	else if (command == "PRIVMSG")
 		PrivmsgCommand(client_fd, tokens);
 	else if (command == "INVITE")

@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 13:02:04 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/02 18:21:29 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/03 11:57:29 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,30 +57,63 @@ void	Server::handleLimitMode(Channel *channel, Client *client, bool checkMode,
 						const std::string& parameter) {
 	int newLimit = std::atoi(parameter.c_str());
 	if (checkMode == true) {
+		if (newLimit <= 0)
+			return ;
 		channel->setUserLimit(newLimit);
 	}
 	else
 		channel->setUserLimit(0);
-	(void)client;
+		
+    std::string modeLimitMessage;
+    modeLimitMessage = ":" + client->getNickName() + " MODE " + channel->getChannelName() + " ";
+    if (checkMode) {
+        modeLimitMessage = modeLimitMessage + "+l " + parameter;
+    } else {
+        modeLimitMessage = modeLimitMessage + "-l";
+    }
+    
+    channel->broadcast(modeLimitMessage, NULL); 
+    client->sendMessage(RPL::RPL_CHANNELMODEIS(getServerName(), client->getNickName(),
+                                    channel->getChannelName(), channel->getModes()));
 	
 }
+
+
 
 void	Server::handleKeyMode(Channel *channel, Client *client, bool checkMode,
 						const std::string& parameter) {
-		(void)channel;
-		(void)client;
-		(void)checkMode;
-		(void)parameter;
-		
+	std::string newPassword = parameter;
+	if (checkMode == true) {
+		channel->setPassword(newPassword);
+	}
+	else {
+		channel->setPassword("");
+	}
+
+	std::string modeKeyMessage;
+	modeKeyMessage = ":" + client->getNickName() + " MODE " + channel->getChannelName() + " ";
 	
+	if (checkMode) {
+		modeKeyMessage = modeKeyMessage + "+k " + parameter;
+	}
+	else {
+		modeKeyMessage = modeKeyMessage + "-k";
+	}
+
+	channel->broadcast(modeKeyMessage, NULL); 
+    client->sendMessage(RPL::RPL_CHANNELMODEIS(getServerName(), client->getNickName(),
+                                    channel->getChannelName(), channel->getModes()));
 }
 
+
+
 void	Server::handleUnknownMode(Channel *channel, Client *client, bool checkMode) {
-	(void)channel;
-		(void)client;
-		(void)checkMode;
 	
+	(void)channel;
+	(void)checkMode;
+	client->sendMessage(RPL::ERR_UNKNOWNMODE(getServerName(), client->getNickName(), "unknown"));
 }
+	
 
 void	Server::ModesCommand(int client_fd, std::vector<std::string> &tokens) {
 	
@@ -113,6 +146,7 @@ void	Server::ModesCommand(int client_fd, std::vector<std::string> &tokens) {
 	if (tokens.size() == 2) {
 		client->sendMessage(RPL::RPL_CHANNELMODEIS(getServerName(), client->getNickName(),
 						channel->getChannelName(), channel->getModes()));
+		return ;
 	}
 
 
@@ -194,13 +228,3 @@ void	Server::ModesCommand(int client_fd, std::vector<std::string> &tokens) {
 	}
 
 
-
-/*[X] Validaciones básicas
-  [X] Consulta de modos
-  [X] Comprobar si el cliente es operador
-  [X] Leer y analizar el string de modos
-  [ ] Verificar modos válidos
-  [ ] Verificar parámetros necesarios
-  [ ] Aplicar los cambios
-  [ ] Hacer broadcast al canal
-  [ ] Implementar los errores necesarios*/

@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 16:12:25 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/02 18:49:47 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/03 11:45:01 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ class	RPL
 
 
 			//MODES
+			static std::string ERR_UNKNOWNMODE(const std::string& server, const std::string& nick, const std::string& modechar);
 			
 			static std::string RPL_CHANNELMODEIS(const std::string &server, const std::string &nick, const std::string &channel, const std::string &modes);
 			

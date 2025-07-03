@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 16:29:47 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/03 11:45:18 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/03 17:45:51 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,11 +183,20 @@ std::string RPL::RPL_ENDOFINFO(const std::string &server, const std::string &nic
     return formatRPL(374, server, nick, message);
 }
 
-
-
-
-
+// KICK
+std::string RPL::ERR_USERNOTINCHANNEL(const std::string &server, const std::string &nick, const std::string &target, const std::string &channel) {
+    return formatRPL(441, server, nick, target + " " + channel + " :They aren't on that channel");
+}
 
 std::string RPL::ERR_UNKNOWNMODE(const std::string& server, const std::string& nick, const std::string& modechar) {
     return ":" + server + " 472 " + nick + " " + modechar + " :is unknown mode char to me\r\n";
+}
+
+// INVITE
+std::string RPL::RPL_INVITING(const std::string &server, const std::string &nick, const std::string &target, const std::string &channel) {
+    return formatRPL(341, server, nick, target + " " + channel);
+}
+
+std::string RPL::ERR_USERONCHANNEL(const std::string &server, const std::string &nick, const std::string &target, const std::string &channel) {
+    return formatRPL(443, server, nick, target + " " + channel + " :is already on channel");
 }

@@ -6,70 +6,77 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 13:02:08 by albelope          #+#    #+#             */
-/*   Updated: 2025/06/30 12:10:13 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/03 17:59:15 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/Server.hpp"
 
 void	Server::InviteCommand(int client_fd, std::vector<std::string> &tokens) {
+	Client* inviter = findClientByFd(client_fd);
+	if(!inviter)
+		return ;
+
 	if (tokens.size() != 3) {
-		std::cout << "Error: RPL parameteres" << std::endl;
-		return ;		
+		std::string error = RPL::ERR_NEEDMOREPARAMS(getServerName(), inviter->getNickName(), "INVITE");
+		inviter->sendMessage(error);
+		return ;
 	}
 
 	std::string nicknameToInvite = tokens[1];
 	std::string channelName = tokens[2];
 
 	if (nicknameToInvite.empty() || channelName.empty()) {
-		std::cout << "Error: Invalid parameters" << std::endl;
-		return;
+		std::string error = RPL::ERR_NEEDMOREPARAMS(getServerName(), inviter->getNickName(), "INVITE");
+		inviter->sendMessage(error);
+		return ;
 	}
 
-	Client* inviter = findClientByFd(client_fd);
-
 	if (!inviter->isRegistered()) {
-		std::cout << "u are not registerd in channel" << std::endl;
-		return ;
+		std::string error = RPL::ERR_NOTREGISTERED(getServerName(), inviter->getNickName());
+		inviter->sendMessage(error);
+		return;
 	}
 
 	Channel* channelToInvite = findChannelByName(channelName);
 	
 	if (!channelToInvite) {
-		std::cout << "Channel no exist" << std::endl;
-		return ;
+		std::string error = RPL::ERR_NOSUCHCHANNEL(getServerName(), inviter->getNickName(), channelName);
+		inviter->sendMessage(error);
+		return;
 	}
 	
 	if (!inviter->isInChannel(channelName)) {
-		std::cout << "u are not in the channel" << std::endl;
-		return ;
+		std::string error = RPL::ERR_NOTONCHANNEL(getServerName(), inviter->getNickName(), channelName);
+		inviter->sendMessage(error);
+		return;
 	}
 	
 	if (channelToInvite->isInviteOnly() && !channelToInvite->isOperator(inviter)) {
-		std::cout << "Error: RPL imple" << std::endl;
+		std::string error = RPL::ERR_CHANOPRIVSNEEDED(getServerName(), inviter->getNickName(), channelName);
+		inviter->sendMessage(error);
 		return;
 	}
 	Client* invitedClient = findClientByNickname(nicknameToInvite);
 
 	if (!invitedClient) {
-		std::cout << "User nickname not found" << std::endl;
-		return ;
-		
+		std::string error = RPL::ERR_NOSUCHNICK(getServerName(), inviter->getNickName(), nicknameToInvite);
+		inviter->sendMessage(error);
+		return;
 	}
 
 	if (invitedClient->isInChannel(channelName)) {
-		std::cout << "Error: User to invite is already in channel" << std::endl;
-		return ; 
+		std::string error = RPL::ERR_USERONCHANNEL(getServerName(), inviter->getNickName(), nicknameToInvite, channelName);
+		inviter->sendMessage(error);
+		return;
 	}
 
 	channelToInvite->addInvited(invitedClient);
 	
-	std::string reply;
-	reply = ":"+ inviter->getNickName() + " " + invitedClient->getNickName() + " " + channelName + "\r\n";
+	std::string reply = RPL::RPL_INVITING(getServerName(), inviter->getNickName(), nicknameToInvite, channelName);
 	inviter->sendMessage(reply);
 
-	std::string inviteMessage;
-	inviteMessage = ":" + inviter->getNickName() + " INVITE " + invitedClient->getNickName() + " :" + channelName + "\r\n";
+	std::string inviteMessage = ":" + inviter->getNickName() + " INVITE " + invitedClient->getNickName() + " :" + channelName + "\r\n";
 	invitedClient->sendMessage(inviteMessage);
 
 }

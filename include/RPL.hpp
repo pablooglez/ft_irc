@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 16:12:25 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/03 11:45:01 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/03 17:44:58 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,12 @@ class	RPL
 			
 			static std::string RPL_CHANNELMODEIS(const std::string &server, const std::string &nick, const std::string &channel, const std::string &modes);
 			
+			// KICK
+			static std::string ERR_USERNOTINCHANNEL(const std::string &server, const std::string &nick, const std::string &target, const std::string &channel); // 441
+
+			// INVITE
+			static std::string RPL_INVITING(const std::string &server, const std::string &nick, const std::string &target, const std::string &channel); // 341
+			static std::string ERR_USERONCHANNEL(const std::string &server, const std::string &nick, const std::string &target, const std::string &channel); // 443
 	private:
 			static std::string formatRPL(int code, const std::string &server, const std::string &nick, const std::string &message);
 };

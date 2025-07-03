@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/03 20:59:11 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/03 22:46:28 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/03 22:47:51 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,7 +168,7 @@ void Bot::start() {
             // Si bytesReceived <= 0 ➜ significa que el servidor cerró la conexión o hubo un error.
             if (bytesReceived <= 0)
             {
-                std::cerr << "El servidor ha cerrado la conexión o hubo un error al recibir." << std::endl;
+                std::cerr << "Error send bytes." << std::endl;
                 break; // Salgo del bucle ➜ el bot ya no puede seguir si pierde la conexión.
             }
 
@@ -187,7 +187,7 @@ void Bot::start() {
                 _bufferBot.erase(0, pos + 2); // El +2 es para saltarme el \r\n.
 
                 // Muestro por pantalla el mensaje que me ha llegado desde el servidor.
-                std::cout << "Mensaje recibido: " << line << std::endl;
+                std::cout << "Msg recieved: " << line << std::endl;
 
                 // Si el servidor me envía un PING ➜ tengo que responder con un PONG.
                 if (line.find("PING") == 0) // Compruebo si la línea empieza exactamente por "PING".
@@ -200,7 +200,7 @@ void Bot::start() {
                     send(_fd, pingReply.c_str(), pingReply.length(), 0);
 
                     // Confirmo en consola que he contestado correctamente al PING.
-                    std::cout << "Respondido al PING con: " << pingReply;
+                    std::cout << "Answer pong: " << pingReply;
                 }
             }
         }

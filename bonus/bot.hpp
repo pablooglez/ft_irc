@@ -17,12 +17,14 @@ class Bot {
         std::string     _bufferBot;
 
     public:
-        Bot(std::string &ip, int port, const std::string &pass, const std::string &channel);
+        Bot(const std::string &ip, int port, const std::string &pass, const std::string &channel);
         /*IP ➜ para saber a qué servidor conectar. Puerto ➜ para saber dónde escuchar.
         Password ➜ para autenticar al bot. Canal ➜ para saber a qué canal debe unirse.*/
         ~Bot();
 
-
+        bool safeSend(const std::string& msg);
+        bool handlePing(const std::string& line);
+        void processMessage(const std::string& line);
         void start();
 
 };

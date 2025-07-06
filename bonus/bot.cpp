@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/03 20:59:11 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/05 18:08:10 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/06 22:15:00 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,17 +19,32 @@
 #include <cstdlib>        // Para atoi (convertir strings a números)
 #include <poll.h>         // Para esperar eventos con poll()
 #include <fcntl.h>          //marcar socket O_NONBLOCK
+#include "botcommand.hpp"
+#include <errno.h>
+
+
 
 Bot::Bot(const std::string& ip, int port, const std::string& pass, const std::string& channel)
     : _ip(ip), _port(port), _pass(pass),
-      _nick("42bot"), _user("42bot"),
-      _channel(channel), _fd(-1) {}
+      _nick("Bot42"), _user("Bot42"), _fd(-1)
+{
+    if (channel[0] != '#')
+        _channel = "#" + channel;
+    else
+        _channel = channel;
+}
 
 Bot::~Bot() {
     if (_fd != -1)       // Si el socket está abierto
         close(_fd);      // Lo cerramos correctamente
 }
 
+
+
+std::string Bot::getChannel() const
+{
+    return _channel;
+}
 
 
 // safeSend es una función que garantiza que se envíe todo el mensaje, aunque el socket envíe solo parte de los datos en un intento.
@@ -47,10 +62,9 @@ bool Bot::safeSend(const std::string& msg)
 }
 
 
-
 void Bot::start() {
     //crear el socet
-    _fd = socket(AF_INET, SOCK_STREAM, 0);  //AFINET (es IPv4(127.0.0.1))-- SOCK_STREAM(tipo TCP) -- 0 elige aut el protocolo(TCP)
+    _fd = socket(AF_INET, SOCK_STREAM, 0);  // AFINET (es IPv4(127.0.0.1))-- SOCK_STREAM(tipo TCP) -- 0 elige aut el protocolo(TCP)
     if (_fd < 0) {
         std::cerr << "Error: socket gone wrong" << std::endl;
         exit(1);
@@ -58,75 +72,62 @@ void Bot::start() {
     std::cout << "Socket created for bot" << std::endl;
 
     fcntl(_fd, F_SETFL, O_NONBLOCK);
-    // fcntl(_fd, F_SETFL, O_NONBLOCK);
     // Esta línea pone el socket en modo no bloqueante ➜ significa que las operaciones de lectura y escritura no se van a quedar esperando si no hay datos.
     // En los sockets no bloqueantes ➜ si no hay datos, recv() no se queda colgado, simplemente devuelve un error temporal.
     // Esto es obligatorio en el proyecto para poder usar poll() de forma eficiente y que todo el sistema sea reactivo y no se cuelgue.
 
-
-    
     // Creamos una estructura que guarda la IP y el puerto del servidor al que me quiero conectar.
-    sockaddr_in serverAddr{}; //igual que pablo pero forma mas limpia , se inicializa todo a certo.
+    sockaddr_in serverAddr;
+    memset(&serverAddr, 0, sizeof(serverAddr));
+
     // sockaddr_in es la estructura que me pide el sistema para poder conectarme.
     // Aquí voy a guardar:
     // - El tipo de red que voy a usar (IPv4 en este caso).
     // - La dirección IP del servidor (por ejemplo: 127.0.0.1).
     // - El puerto al que me quiero conectar (por ejemplo: 6667).
-    // Sin esta estructura, el sistema no sabría a qué servidor quiero conectarme.
 
-    // Defino el tipo de conexión que voy a usar.
-    serverAddr.sin_family = AF_INET;
-    // sin_family es el campo donde le digo qué tipo de red voy a usar.
-    // AF_INET significa que estoy usando direcciones IPv4, que son las típicas como 127.0.0.1.
-    // Si estuviera usando IPv6, tendría que poner AF_INET6, pero en este proyecto siempre es IPv4.
-
-    // Ahora le digo a qué puerto me quiero conectar.
-    serverAddr.sin_port = htons(_port);
-    // sin_port es donde guardo el número del puerto al que me quiero conectar (por ejemplo: 6667).
-    // La función htons convierte el puerto al formato que usa la red.
-    // Los ordenadores pueden guardar los números en diferente orden (endianness), pero la red siempre usa big-endian.
-    // htons significa "host to network short" ➜ es decir, convierte el número de mi ordenador al formato que usa la red.
-    // Esto es importante porque los ordenadores pueden guardar los números al revés (esto se llama endianness).
-    // La red siempre usa big-endian (el byte más importante primero) y si no convierto el puerto, el servidor no lo entendería bien.
-    // Ejemplo: si quiero conectarme al puerto 6667 ➜ con htons(6667) lo paso al orden correcto que la red espera.
-    // Con htons me aseguro de que el número del puerto esté en el orden correcto para la red.
-    // Ejemplo: si quiero conectarme al puerto 6667 ➜ con htons(6667) lo paso al formato que entiende la red.
-    /*  h = host       ➜ tu ordenador
-        to = to        ➜ convertir a
-        n = network    ➜ formato de red
-        s = short      ➜ número corto (2 bytes, como los puertos)*/
-
-
+    serverAddr.sin_family = AF_INET; // tipo de red IPv4
+    serverAddr.sin_port = htons(_port); // convierto el puerto al formato que usa la red (big-endian)
 
     // Convierto la dirección IP que tengo en texto a formato binario que entiende la red.
     if (inet_pton(AF_INET, _ip.c_str(), &serverAddr.sin_addr) <= 0)
     {
-        std::cerr << "IP Adrres invalid" << std::endl;
+        std::cerr << "IP Address invalid" << std::endl;
         exit(1);
     }
-    // inet_pton significa "Internet Presentation To Network" ➜ lo que hace es convertir la IP que tengo en texto (por ejemplo: "127.0.0.1")
-    // a un formato binario que el socket pueda entender y usar.
-    // AF_INET ➜ significa que estamos trabajando con direcciones IPv4.
-    // _ip.c_str() ➜ convierte mi string de C++ a una cadena de caracteres tipo C que necesita la función.
-    // &serverAddr.sin_addr ➜ es donde se guarda la IP ya convertida en formato de red.
-    // Si la IP es inválida o no se puede convertir ➜ la función devuelve <= 0 y el programa se cierra porque no nos podemos conectar.
 
-
-
-     // Ahora intento conectar con el servidor usando el socket y la IP que he configurado.
+    // Intento conectar con el servidor usando el socket y la IP que he configurado.
     if (connect(_fd, (sockaddr *)&serverAddr, sizeof(serverAddr)) < 0)
     {
-        std::cerr << "Error conection " << std::endl;
-        exit(1);
+        if (errno != EINPROGRESS)
+        {
+            std::cerr << "Error: connect() failed" << std::endl;
+            exit(1);
+        }
+
+        // EINPROGRESS significa que la conexión está en curso ➜ hay que esperar con poll
+        struct pollfd pfd;
+        pfd.fd = _fd;
+        pfd.events = POLLOUT;
+        pfd.revents = 0;
+
+        std::cout << "Waiting for connection to complete..." << std::endl;
+
+        if (poll(&pfd, 1, 5000) <= 0) // Timeout de 5 segundos
+        {
+            std::cerr << "Error: connection timeout or poll() failed" << std::endl;
+            exit(1);
+        }
+
+        int error = 0;
+        socklen_t len = sizeof(error);
+        if (getsockopt(_fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0 || error != 0)
+        {
+            std::cerr << "Error: getsockopt() after poll indicates error" << std::endl;
+            exit(1);
+        }
     }
-    // connect es la función que realmente intenta abrir la conexión con el servidor.
-    // Le paso:
-    // - El socket que he creado (_fd).
-    // - La estructura con la IP y el puerto, convertida a sockaddr porque connect lo pide así.
-    // - El tamaño de la estructura que estoy usando.
-    // Si la conexión falla, connect devuelve un número negativo y cierro el programa porque no puedo seguir.
-
-
+    std::cout << "Bot connected successfully!" << std::endl;
 
     // Después de conectar al servidor, ahora mando los comandos IRC obligatorios para iniciar sesión.
     // Enviar PASS ➜ mando la contraseña que necesita el servidor.
@@ -145,70 +146,45 @@ void Bot::start() {
     std::string joinCmd = "JOIN " + _channel + "\r\n";
     send(_fd, joinCmd.c_str(), joinCmd.length(), 0);
 
-    //comandos son OBLIGATORIOS en el protocolo IRC para que el bot pueda entrar al servidor y al canal.
-    
+    // comandos son OBLIGATORIOS en el protocolo IRC para que el bot pueda entrar al servidor y al canal.
 
     // Preparo la estructura que voy a pasar a poll ➜ poll necesita saber qué sockets tiene que vigilar.
-    pollfd pfd{_fd, POLLIN, 0};
+    pollfd pfd;
+    pfd.fd = _fd;
+    pfd.events = POLLIN;
+    pfd.revents = 0;
+
     // Aquí creamos una estructura pollfd ➜ esta estructura le dice a poll() que queremos vigilar nuestro socket (_fd).
     // POLLIN ➜ significa que solo nos interesa saber cuándo hay datos disponibles para leer.
-    // 0 ➜ es el campo revents, lo inicializamos a cero porque poll lo va a actualizar cuando haya actividad.
 
-
-    
     // Preparo un buffer temporal para leer lo que llegue desde el servidor.
     char buffer[512]; // Este buffer va a almacenar los datos que el servidor me envíe cada vez que poll me avise.
     // El tamaño es 512 ➜ normalmente suficiente para mensajes IRC (aunque pueden llegar fragmentados).
+
     while (true)
     {
         if (poll(&pfd, 1, -1) <= 0)
             continue;
-        // if (poll(&pfd, 1, -1) <= 0) continue;
-        // poll ➜ es la función que espera hasta que el socket tenga actividad.
-        // &pfd ➜ le pasamos la estructura con el socket que queremos vigilar.
-        // 1 ➜ le decimos que estamos vigilando solo un socket.
-        // -1 ➜ significa que vamos a esperar indefinidamente hasta que pase algo.
-        // Si poll devuelve 0 o menos ➜ significa que no ha pasado nada o que ha habido un error ➜ seguimos esperando.
 
         if (!(pfd.revents & POLLIN))
             continue;
-        // Si no ha ocurrido un evento de lectura (POLLIN) ➜ es decir, no hay datos para leer, seguimos esperando.
-        // Esto evita que el bot intente leer cuando no ha llegado nada ➜ sería un error si lo intentáramos.
 
-        ssize_t n = recv(_fd, buffer, sizeof(buffer)-1, 0);
-        // recv ➜ intenta recibir datos del socket _fd.
-        // buffer ➜ es donde guardamos lo que recibimos.
-        // sizeof(buffer)-1 ➜ dejamos espacio para el carácter nulo '\0'.
-        // 0 ➜ modo normal de recepción, sin opciones especiales.
-
-        
-        if (n <= 0) { 
+        ssize_t n = recv(_fd, buffer, sizeof(buffer) - 1, 0);
+        if (n <= 0)
+        {
             std::cerr << "server closed\n";
             break;
         }
-        // Si recv devuelve 0 ➜ significa que el servidor ha cerrado la conexión correctamente.
-        // Si recv devuelve un número negativo ➜ ha ocurrido un error.
-        // En ambos casos ➜ salimos del bucle porque no podemos seguir sin conexión.
 
-
-        
-        buffer[n] = '\0';  
-        // Esta línea garantiza que el buffer se termine con un carácter nulo ➜ así podemos tratarlo como un string en C++ y evitar basura al final.
-        
+        buffer[n] = '\0';
         _bufferBot.append(buffer);
-        // Añadimos lo que acabamos de recibir al buffer acumulador (_bufferBot) ➜ porque los mensajes IRC pueden llegar cortados y necesitamos juntar las piezas.
-        
+
         /* Procesar líneas completas */
         size_t pos;
-        // Buscamos dentro del buffer acumulador si ya hemos recibido una línea completa (las líneas IRC terminan con \r\n).
-        // Si encontramos una ➜ procesamos la línea.
-        // Si no ➜ seguimos esperando a que lleguen más datos para completarla.
         while ((pos = _bufferBot.find("\r\n")) != std::string::npos)
         {
             std::string line = _bufferBot.substr(0, pos);
-            // Extraemos la línea completa ➜ desde el principio del buffer hasta el final de la línea que hemos encontrado.
             _bufferBot.erase(0, pos + 2);
-            // Mostramos por pantalla el mensaje completo que nos ha llegado desde el servidor ➜ útil para depurar y saber que estamos leyendo bien.
             std::cout << ">> " << line << '\n';
 
             if (handlePing(line))
@@ -271,32 +247,14 @@ void Bot::processMessage(const std::string& line)
         return;
     // Si no encontramos " :" ➜ el formato es inválido ➜ no procesamos el mensaje.
 
-    std::string texto = line.substr(msgPos + 2);
+    std::string text = line.substr(msgPos + 2);
     // Extraemos el contenido del mensaje ➜ saltamos el espacio y los dos puntos (por eso +2)
     // Ejemplo:
     // Mensaje completo ➜ ":juan PRIVMSG #canal :Hola mundo"
     // texto ➜ "Hola mundo"
 
-    // Si el mensaje comienza exactamente por "!reverse " ➜ significa que el usuario está usando el comando especial del bot.
-    if (texto.rfind("!reverse ", 0) == 0)
-    {
-        // Extraemos la parte del mensaje que queremos invertir ➜ eliminamos "!reverse " que ocupa 9 caracteres.
-        std::string original = texto.substr(9);
-        // Ejemplo:
-        // Si texto ➜ "!reverse hola mundo"
-        // original ➜ "hola mundo"
+    handleCommands(this, text);
 
-        // Creamos una nueva cadena que es la inversa de "original" ➜ usamos los iteradores inversos de C++.
-        std::string rev(original.rbegin(), original.rend());
-        // Ejemplo:
-        // rev ➜ "odnum aloh"
-
-        // Enviamos la respuesta al canal ➜ el bot escribe el texto invertido.
-        safeSend("PRIVMSG " + _channel + " :" + rev + "\r\n");
-        // En IRC ➜ PRIVMSG #canal :respuesta ➜ es el formato correcto para enviar mensajes a un canal.
-        // Ejemplo:
-        // PRIVMSG #canal :odnum aloh
-    }
 }
 
 

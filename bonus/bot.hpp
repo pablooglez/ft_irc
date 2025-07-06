@@ -7,7 +7,6 @@
 
 class Bot {
     private:
-        int             _fd; // fd , bot necesita un socket para conectarse al servidor.
         std::string     _ip;
         int             _port;
         std::string     _pass;
@@ -15,6 +14,7 @@ class Bot {
         std::string     _user;
         std::string     _channel;
         std::string     _bufferBot;
+        int             _fd;
 
     public:
         Bot(const std::string &ip, int port, const std::string &pass, const std::string &channel);
@@ -22,10 +22,16 @@ class Bot {
         Password ➜ para autenticar al bot. Canal ➜ para saber a qué canal debe unirse.*/
         ~Bot();
 
+
+        std::string getChannel() const;
+
+        
         bool safeSend(const std::string& msg);
         bool handlePing(const std::string& line);
         void processMessage(const std::string& line);
         void start();
+
+
 
 };
 

@@ -3,17 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   privmsg.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-<<<<<<< HEAD
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 18:09:47 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/24 23:09:40 by pablogon         ###   ########.fr       */
-=======
-/*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/24 18:09:47 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/02 17:40:26 by albelope         ###   ########.fr       */
->>>>>>> Basura-Channel
+/*   Updated: 2025/07/07 20:40:07 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,11 +84,7 @@ void	Server::PrivmsgCommand(int client_fd, const std::vector<std::string> &token
 		// Send to ALL users in the channel EXCEPT the sender
 		std::string privmsg = ":" + client->getNickName() + "!" + client->getUserName() + "@" + client->getHostName() + " PRIVMSG " + target + " :" + message + "\r\n";	// Send to ALL users in the channel EXCEPT the sender
 
-<<<<<<< HEAD
-		const std::vector<Client*>& channel_clients = channel->getClients();
-=======
 		const std::vector<Client*>& channel_clients = channel->getMembers();
->>>>>>> Basura-Channel
 		for (std::vector<Client*>::const_iterator it = channel_clients.begin(); it != channel_clients.end(); ++it)
 		{
 			if ((*it)->getFd() != client_fd)  // Don't send to sender
@@ -109,11 +98,7 @@ void	Server::PrivmsgCommand(int client_fd, const std::vector<std::string> &token
 	else
 	{
 		// Private message to user
-<<<<<<< HEAD
-		Client* target_client = findClientByNick(target);
-=======
-		Client* target_client = findClientByNickname(target); //pablo tiene otra funcion aqui findclientBynick que recorre un map de Client.
->>>>>>> Basura-Channel
+		Client* target_client = findClientByNickname(target);
 		if (!target_client)
 		{
 			std::string error = RPL::ERR_NOSUCHNICK(getServerName(), client->getNickName(), target);

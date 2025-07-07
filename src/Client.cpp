@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 16:19:42 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/19 12:49:20 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/07 18:53:45 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -230,9 +230,4 @@ void	Client::clearBuffer()
 std::string Client::getPrefix() const
 {
 	return (":" + this->_nickname + "!" + this->_username + "@" + this->_hostname);
-}
-
-std::string Client::getFullIdentifier() const
-{
-	return (this->_nickname + "!" + this->_username + "@" + this->_hostname);
 }

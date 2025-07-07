@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 21:01:20 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/07 12:19:18 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/07 17:53:23 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,19 +16,19 @@
 
 int main(int argc, char **argv)
 {
-    if (argc != 5)
-    {
-        std::cerr << "Usage: ./bot <ip> <port> <password> <channel>" << std::endl;
-        return 1;
-    }
+	if (argc != 5)
+	{
+		std::cerr << "Usage: ./bot <ip> <port> <password> <channel>" << std::endl;
+		return (1);
+	}
 
-    std::string ip = argv[1];
-    int port = std::atoi(argv[2]);
-    std::string password = argv[3];
-    std::string channel = argv[4];
+	std::string ip = argv[1];
+	int port = std::atoi(argv[2]);
+	std::string password = argv[3];
+	std::string channel = argv[4];
 
-    Bot bot(ip, port, password, channel);
-    bot.start();
+	Bot bot(ip, port, password, channel);
+	bot.start();
 
-    return 0;
+	return (0);
 }

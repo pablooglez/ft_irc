@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 17:05:24 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/07 16:31:57 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/07 21:44:10 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,11 @@
 
 Server::Server(int port, const std::string &password)
 {
-	this->_port = port;
-	this->_password = password;
-	this->_server_name = "localhost";
-	this->_server_fd = -1;
-	this->_running = false;
+	_port = port;
+	_password = password;
+	_server_name = "localhost";
+	_server_fd = -1;
+	_running = false;
 }
 
 Server::~Server()
@@ -54,61 +54,60 @@ std::string Server::getClientNick(int client_fd) const
 	std::map<int, Client>::const_iterator it = _clients.find(client_fd);
 	if (it != _clients.end() && !it->second.getNickName().empty())
 		return it->second.getNickName();
-	return "*";  // Client without nicknmae
+	return "*";	// Client without nicknname
 }
 
 bool	Server::setupSocket()
 {
 	std::cout << "....Configure setupSocket...." << std::endl;
 
-	this->_server_fd = socket(AF_INET, SOCK_STREAM, 0); // Create Socket
+	_server_fd = socket(AF_INET, SOCK_STREAM, 0);
 
-	if (this->_server_fd == -1)
+	if (_server_fd == -1)
 	{
 		std::cerr << "Error: socket() failed" << std::endl;
 		return (false);
 	}
 
 	int	opt = 1;
-	if (setsockopt(this->_server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) // Configure SO_REUSEADDR
+	if (setsockopt(_server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
 	{
 		std::cerr << "Error: setsockopt() failed" << std::endl;
 		return (false);
 	}
 
-	std::memset(&this->_server_addr, 0, sizeof(this->_server_addr)); // Configure Server Address
-	this->_server_addr.sin_family = AF_INET; // IPV4
-	this->_server_addr.sin_addr.s_addr = INADDR_ANY; // ALL INTERFACES (0.0.0.0)
-	this->_server_addr.sin_port = htons(this->_port); // Network byte order
+	std::memset(&_server_addr, 0, sizeof(_server_addr));
+	_server_addr.sin_family = AF_INET;
+	_server_addr.sin_addr.s_addr = INADDR_ANY;
+	_server_addr.sin_port = htons(_port);
 
-	if (bind(this->_server_fd, (struct sockaddr*) &this->_server_addr, sizeof(this->_server_addr)) < 0) // Bind - "Reserve" the port
+	if (bind(_server_fd, (struct sockaddr*) &_server_addr, sizeof(_server_addr)) < 0)
 	{
 		std::cerr << "Error: bind() failed" << std::endl;
 		cleanup();
 		return (false);
 	}
 
-	if (listen(this->_server_fd, SOMAXCONN) < 0) // Start listening for connections
+	if (listen(_server_fd, SOMAXCONN) < 0)
 	{
 		std::cerr << "Error: listen() failed" << std::endl;
 		cleanup();
 		return (false);
 	}
 
-	if (fcntl(this->_server_fd, F_SETFL, O_NONBLOCK) == -1) // Socket Not-blocking
+	if (fcntl(_server_fd, F_SETFL, O_NONBLOCK) == -1)
 	{
 		std::cerr << "Error: fcntl() failed" << std::endl;
 		cleanup();
 		return (false);
 	}
 
-	// Configure poll for server socket
 	struct pollfd server_pollfd;
-	server_pollfd.fd = this->_server_fd;
+	server_pollfd.fd = _server_fd;
 	server_pollfd.events = POLLIN;
 	server_pollfd.revents = 0;
 
-	this->_poll_fds.push_back(server_pollfd);	// Add server socket to poll array
+	_poll_fds.push_back(server_pollfd);
 
 	
 	std::cout << "Server socket created succesfully" << std::endl;
@@ -126,7 +125,7 @@ void	Server::start()
 		return;
 	}
 
-	this->_running = true;
+	_running = true;
 
 	std::cout << "    SERVER STARTED    " << std::endl;
 
@@ -135,28 +134,28 @@ void	Server::start()
 
 void	Server::stop()
 {
-	this->_running = false;
+	_running = false;
 
 	cleanup();
 }
 
 void	Server::cleanup()
 {
-	for (size_t i = 0; i < this->_client_fds.size(); i++) // Close all client sockets
+	for (size_t i = 0; i < _client_fds.size(); i++)
 	{
-		close(this->_client_fds[i]);
+		close(_client_fds[i]);
 	}
-	this->_client_fds.clear();
+	_client_fds.clear();
 
-	this->_poll_fds.clear(); // Clean poll array
+	_poll_fds.clear();
 	
-	this->_client_buffers.clear(); // Clean client buffers
-	this->_clients.clear(); // Clean client objects
+	_client_buffers.clear();
+	_clients.clear();
 
-	if (this->_server_fd != -1) // Close server socket
+	if (_server_fd != -1)
 	{
-		close(this->_server_fd);
-		this->_server_fd = -1;
+		close(_server_fd);
+		_server_fd = -1;
 	}
 	
 	std::cout << "Server cleanup completed" << std::endl;
@@ -231,26 +230,24 @@ void	Server::handleNewConnection()
 		return;
 	}
 
-	if (fcntl(client_fd, F_SETFL, O_NONBLOCK) == -1) // Socket Not-blocking
+	if (fcntl(client_fd, F_SETFL, O_NONBLOCK) == -1)	// Socket Not-blocking
 	{
 		std::cerr << "Error: fcntl() failed for client socket" << std::endl;
 		close(client_fd);
 		return;
 	}
 	
-	// Add the client to the poll array
 	struct pollfd client_pollfd;
 	client_pollfd.fd = client_fd;
 	client_pollfd.events = POLLIN;
 	client_pollfd.revents = 0;
 	
-	this->_poll_fds.push_back(client_pollfd);
-	this->_client_fds.push_back(client_fd);
+	_poll_fds.push_back(client_pollfd);
+	_client_fds.push_back(client_fd);
 	
 	char	client_ip[INET_ADDRSTRLEN];
 	inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, INET_ADDRSTRLEN);
 	
-	// Create Client object
 	createClientObject(client_fd, std::string(client_ip));
 	
 	std::cout << "New client connected:" << std::endl;
@@ -258,7 +255,7 @@ void	Server::handleNewConnection()
 	std::cout << "  - IP: " << client_ip << std::endl;
 	std::cout << "  - Port: " << ntohs(client_addr.sin_port) << std::endl;
 	std::cout << "  - Client object created" << std::endl;
-	std::cout << "  - Total clients: " << this->_client_fds.size() << std::endl;
+	std::cout << "  - Total clients: " << _client_fds.size() << std::endl;
 }
 
 void	Server::handleClientData(int client_fd)
@@ -292,23 +289,21 @@ void	Server::removeClient(int client_fd)
 {
 	std::cout << "...Removing client (FD: " << client_fd << ")..." << std::endl;
 	
-	// Find and remove from _client_fds
-	std::vector<int>::iterator it = std::find(this->_client_fds.begin(), this->_client_fds.end(), client_fd);
+	std::vector<int>::iterator it = std::find(_client_fds.begin(), _client_fds.end(), client_fd);
 	
-	if (it != this->_client_fds.end())
+	if (it != _client_fds.end())
 	{
-		this->_client_fds.erase(it);
+		_client_fds.erase(it);
 		std::cout << "Client removed from _client_fds" << std::endl;
 	}
 	else
 		std::cerr << "Error: Client FD not found in _client_fds" << std::endl;
 	
-	// Find and remove from _poll_fds
-	for (std::vector<struct pollfd>::iterator poll_it = this->_poll_fds.begin(); poll_it != this->_poll_fds.end(); ++poll_it)
+	for (std::vector<struct pollfd>::iterator poll_it = _poll_fds.begin(); poll_it != _poll_fds.end(); ++poll_it)
 	{
 		if (poll_it->fd == client_fd)
 		{
-			this->_poll_fds.erase(poll_it);
+			_poll_fds.erase(poll_it);
 			std::cout << "Client removed from _poll_fds" << std::endl;
 			break;
 		}
@@ -503,11 +498,7 @@ void	Server::sendWelcomeMessages(int client_fd)
 	std::cout << "Welcome messages sent to client " << client_fd << " (" << client->getNickName() << ")" << std::endl;
 }
 
-
-//===============================================================================================
-//=== 		FUNCIONES AUXILIARES PARA PRIVMSG  CHECKEAR CON PABLIT ==============================
-//==== LAS Q TENGO EN CHANNEL SON PARA BUSCAR DENTRO DEL CANAL NO EN LOS SERVIDORES DEL CANAL ==
-//===============================================================================================
+// CHANNEL MANAGEMENT FUNCTIONS
 
 Client* Server::findClientByNickname(const std::string& nickname)
 {
@@ -522,36 +513,6 @@ Client* Server::findClientByNickname(const std::string& nickname)
 	return NULL;
 }
 
-Channel* Server::findChannelByName(const std::string& name)
-{
-	if (name.empty())
-		return NULL;
-		
-	std::map<std::string, Channel>::iterator it_channel = _channels.find(name);
-	if (it_channel != _channels.end())
-		return &(it_channel->second);
-	return NULL;
-}
-
-/*bool Server::channelExists(const std::string& name)
-{
-	if (name.empty())
-		return false;
-		
-	return _channels.find(name) != _channels.end();
-}*/// Sirve solo para saber si el canal existe. Es casi inútil porque findChannelByName ya lo hace mejor.
-// Puede servir para logs o cosas rápidas donde no necesitas el canal.
-
-
-
-
-
-
-
-
-//NEW CODE OF PABLO
-
-// CHANNEL MANAGEMENT FUNCTIONS
 
 Channel* Server::findOrCreateChannel(const std::string &channel_name)
 {

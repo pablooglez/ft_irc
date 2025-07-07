@@ -6,11 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 20:29:30 by pablogon          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/06/27 20:22:54 by pablogon         ###   ########.fr       */
-=======
-/*   Updated: 2025/06/21 18:24:56 by pablogon         ###   ########.fr       */
->>>>>>> Basura-Channel
+/*   Updated: 2025/07/07 16:39:51 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +33,6 @@ void	Server::PassCommand(int client_fd, const std::vector<std::string> &tokens)
 	{
 		std::string error = RPL::ERR_ALREADYREGISTERED(getServerName(), client->getNickName());
 		client->sendMessage(error);
-<<<<<<< HEAD
 		return;
 	}
 
@@ -45,8 +40,6 @@ void	Server::PassCommand(int client_fd, const std::vector<std::string> &tokens)
 	{
 		std::string error = RPL::ERR_ALREADYREGISTERED(getServerName(), getClientNick(client_fd));
 		client->sendMessage(error);
-=======
->>>>>>> Basura-Channel
 		return;
 	}
 

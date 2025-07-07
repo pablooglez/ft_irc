@@ -6,11 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 17:51:21 by pablogon          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/06/28 16:18:32 by pablogon         ###   ########.fr       */
-=======
-/*   Updated: 2025/06/24 18:26:35 by pablogon         ###   ########.fr       */
->>>>>>> Basura-Channel
+/*   Updated: 2025/07/07 16:42:56 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,11 +22,7 @@ void Server::UserCommand(int client_fd, const std::vector<std::string> &tokens)
 		return;
 	}
 
-<<<<<<< HEAD
 	if (tokens.size() < 5)	// Check sufficient parameters: USER <username> <hostname> <servername> <realname>
-=======
-	if (tokens.size() < 5)	// Check sufficient parameters
->>>>>>> Basura-Channel
 	{
 		std::string error = RPL::ERR_NEEDMOREPARAMS(getServerName(), getClientNick(client_fd), "USER");
 		client->sendMessage(error);
@@ -58,12 +50,6 @@ void Server::UserCommand(int client_fd, const std::vector<std::string> &tokens)
 		return;
 	}
 
-<<<<<<< HEAD
-	std::string username = tokens[1];	// Extract username (only first parameter)
-
-	// Validate that username is not empty
-	if (username.empty())
-=======
 	std::string username = tokens[1];	// Extract parameters
 	std::string realname = tokens[4];
 
@@ -79,7 +65,6 @@ void Server::UserCommand(int client_fd, const std::vector<std::string> &tokens)
 
 	// Validate that they are not empty
 	if (username.empty() || realname.empty())
->>>>>>> Basura-Channel
 	{
 		std::string error = RPL::ERR_NEEDMOREPARAMS(getServerName(), getClientNick(client_fd), "USER");
 		client->sendMessage(error);
@@ -98,8 +83,4 @@ void Server::UserCommand(int client_fd, const std::vector<std::string> &tokens)
 		std::cout << "Client " << client_fd << " is now fully registered!" << std::endl;
 		sendWelcomeMessages(client_fd);
 	}
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> Basura-Channel

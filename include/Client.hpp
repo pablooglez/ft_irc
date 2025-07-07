@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 13:23:19 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/18 20:12:29 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/07 21:07:11 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,6 @@ class Client
 			Client &operator=(const Client &obj);
 			~Client();
 
-			// GETTERS
 			int								getFd() const;
 			const std::string				&getNickName() const;
 			const std::string				&getUserName() const;
@@ -54,7 +53,7 @@ class Client
 			bool							isRegistered() const;
 			const std::vector<Channel*>		&getChannels()const;
 			const std::string				&getBuffer() const;
-			
+
 			// SETTERS
 			void	setNickName(const std::string &nickname);
 			void	setUserName(const std::string &username);
@@ -64,9 +63,9 @@ class Client
 			void	setHasUserInfo(bool has_userinfo);
 			void	setBuffer(const std::string &buffer);
 
-			// METHOS
-			void	updateRegistrationStatus();	// Update _is_registered
-			bool	isFullyRegistered() const;	// Verify complete registration
+			// METHODS
+			void	updateRegistrationStatus();
+			bool	isFullyRegistered() const;
 
 			// CHANNEL MANAGEMENT
 			void	addChannel(Channel *channel);
@@ -80,6 +79,5 @@ class Client
 			void	clearBuffer();
 
 			// FORMATTING UTILITIES
-			std::string	getPrefix() const;			// :nick!user@host
-			std::string	getFullIdentifier() const;	// nick!user@host
+			std::string	getPrefix() const;
 };

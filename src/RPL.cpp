@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   RPL2.cpp                                           :+:      :+:    :+:   */
+/*   RPL.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 16:29:47 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/07 16:33:15 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/07 21:43:01 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,26 +25,26 @@ std::string RPL::formatRPL(int code, const std::string &server, const std::strin
 // WELCOME MESSAGES
 std::string RPL::RPL_WELCOME(const std::string &server, const std::string &nick, const std::string &user, const std::string &host)
 {
-    std::string message = ":Welcome to the Internet Relay Network " + nick + "!" + user + "@" + host;
-    return formatRPL(1, server, nick, message);
+	std::string message = ":Welcome to the Internet Relay Network " + nick + "!" + user + "@" + host;
+	return formatRPL(1, server, nick, message);
 }
 
 std::string RPL::RPL_YOURHOST(const std::string &server, const std::string &nick, const std::string &servername, const std::string &version)
 {
-    std::string message = ":Your host is " + servername + ", running version " + version;
-    return formatRPL(2, server, nick, message);
+	std::string message = ":Your host is " + servername + ", running version " + version;
+	return formatRPL(2, server, nick, message);
 }
 
 std::string RPL::RPL_CREATED(const std::string &server, const std::string &nick, const std::string &date)
 {
-    std::string message = ":This server was created " + date;
-    return formatRPL(3, server, nick, message);
+	std::string message = ":This server was created " + date;
+	return formatRPL(3, server, nick, message);
 }
 
 std::string RPL::RPL_MYINFO(const std::string &server, const std::string &nick, const std::string &servername, const std::string &version, const std::string &user_modes, const std::string &channel_modes)
 {
-    std::string message = servername + " " + version + " " + user_modes + " " + channel_modes;
-    return formatRPL(4, server, nick, message);
+	std::string message = servername + " " + version + " " + user_modes + " " + channel_modes;
+	return formatRPL(4, server, nick, message);
 }
 
 // PASS
@@ -88,22 +88,22 @@ std::string RPL::ERR_NOTREGISTERED(const std::string &server, const std::string 
 // JOIN
 std::string RPL::RPL_NOTOPIC(const std::string &server, const std::string &nick, const std::string &channel)
 {
-    return formatRPL(331, server, nick, channel + " :No topic is set");
+	return formatRPL(331, server, nick, channel + " :No topic is set");
 }
 
 std::string RPL::RPL_TOPIC(const std::string &server, const std::string &nick, const std::string &channel, const std::string &topic)
 {
-    return formatRPL(332, server, nick, channel + " :" + topic);
+	return formatRPL(332, server, nick, channel + " :" + topic);
 }
 
 std::string RPL::RPL_NAMREPLY(const std::string &server, const std::string &nick, const std::string &channel, const std::string &names)
 {
-    return formatRPL(353, server, nick, "= " + channel + " :" + names);
+	return formatRPL(353, server, nick, "= " + channel + " :" + names);
 }
 
 std::string RPL::RPL_ENDOFNAMES(const std::string &server, const std::string &nick, const std::string &channel)
 {
-    return formatRPL(366, server, nick, channel + " :End of /NAMES list");
+	return formatRPL(366, server, nick, channel + " :End of /NAMES list");
 }
 
 std::string RPL::ERR_NOSUCHCHANNEL(const std::string &server, const std::string &nick, const std::string &channel)
@@ -160,43 +160,47 @@ std::string RPL::ERR_NOTONCHANNEL(const std::string &server, const std::string &
 
 std::string RPL::RPL_CHANNELMODEIS(const std::string &server, const std::string &nick, const std::string &channel, const std::string &modes)
 {
-    return formatRPL(324, server, nick, channel + " " + modes);
+	return formatRPL(324, server, nick, channel + " " + modes);
 }
 
 std::string RPL::RPL_LIST(const std::string &server, const std::string &nick, const std::string &channel, const std::string &visible_users, const std::string &topic)
 {
-    return formatRPL(322, server, nick, channel + " " + visible_users + " :" + topic);
+	return formatRPL(322, server, nick, channel + " " + visible_users + " :" + topic);
 }
 
 std::string RPL::RPL_LISTEND(const std::string &server, const std::string &nick)
 {
-    return formatRPL(323, server, nick, ":End of /LIST command");
+	return formatRPL(323, server, nick, ":End of /LIST command");
 }
 
 std::string RPL::RPL_INFO(const std::string &server, const std::string &nick, const std::string &info)
 {
-    return formatRPL(371, server, nick, info);
+	return formatRPL(371, server, nick, info);
 }
 
 std::string RPL::RPL_ENDOFINFO(const std::string &server, const std::string &nick, const std::string &message)
 {
-    return formatRPL(374, server, nick, message);
+	return formatRPL(374, server, nick, message);
 }
 
 // KICK
-std::string RPL::ERR_USERNOTINCHANNEL(const std::string &server, const std::string &nick, const std::string &target, const std::string &channel) {
-    return formatRPL(441, server, nick, target + " " + channel + " :They aren't on that channel");
+std::string RPL::ERR_USERNOTINCHANNEL(const std::string &server, const std::string &nick, const std::string &target, const std::string &channel)
+{
+	return formatRPL(441, server, nick, target + " " + channel + " :They aren't on that channel");
 }
 
-std::string RPL::ERR_UNKNOWNMODE(const std::string& server, const std::string& nick, const std::string& modechar) {
-    return ":" + server + " 472 " + nick + " " + modechar + " :is unknown mode char to me\r\n";
+std::string RPL::ERR_UNKNOWNMODE(const std::string& server, const std::string& nick, const std::string& modechar)
+{
+	return ":" + server + " 472 " + nick + " " + modechar + " :is unknown mode char to me\r\n";
 }
 
 // INVITE
-std::string RPL::RPL_INVITING(const std::string &server, const std::string &nick, const std::string &target, const std::string &channel) {
-    return formatRPL(341, server, nick, target + " " + channel);
+std::string RPL::RPL_INVITING(const std::string &server, const std::string &nick, const std::string &target, const std::string &channel)
+{
+	return formatRPL(341, server, nick, target + " " + channel);
 }
 
-std::string RPL::ERR_USERONCHANNEL(const std::string &server, const std::string &nick, const std::string &target, const std::string &channel) {
-    return formatRPL(443, server, nick, target + " " + channel + " :is already on channel");
+std::string RPL::ERR_USERONCHANNEL(const std::string &server, const std::string &nick, const std::string &target, const std::string &channel)
+{
+	return formatRPL(443, server, nick, target + " " + channel + " :is already on channel");
 }

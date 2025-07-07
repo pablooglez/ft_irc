@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:37:38 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/25 16:30:52 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/07 16:29:22 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ extern int	g_global;
 # include "Client.hpp"
 # include "Channel.hpp"
 # include "RPL.hpp"
+
 
 class Client;
 class Channel;
@@ -101,15 +102,20 @@ class Server
 			// CLIENT MANAGEMENT
 			void		createClientObject(int client_fd, const std::string &hostname); // Create Client object
 			Client*		findClientByFd(int client_fd);									// Find client by file descriptor
-			Client*		findClientByNick(const std::string &nickname);					// Find client by nickname
 			bool		isNicknameInUse(const std::string &nickname);					// Check if nickname is already taken
 			bool		isValidNickname(const std::string &nickname);					// Validate nickname format
 			
+			void		PrivmsgCommand(int client_fd, const std::vector<std::string> &tokens);
+
+
 			// CHANNEL MANAGEMENT
 			Channel*	findOrCreateChannel(const std::string &channel_name);			// Find existing channel or create new one
 			Channel*	findChannel(const std::string &channel_name);					// Find existing channel
 			bool		channelExists(const std::string &channel_name);					// Check if channel exists
 			void		removeChannelIfEmpty(const std::string &channel_name);			// Remove channel if no users
+			
+
+			
 			
 			// COMMANDS
 			void	PassCommand(int client_fd, const std::vector<std::string> &tokens);
@@ -117,12 +123,55 @@ class Server
 			void	UserCommand(int client_fd, const std::vector<std::string> &tokens);
 			void	QuitCommand(int client_fd, const std::vector<std::string> &tokens);
 			void	JoinCommand(int client_fd, const std::vector<std::string> &tokens);
-			void	PrivmsgCommand(int client_fd, const std::vector<std::string> &tokens);
+			//void	PrivmsgCommand(int client_fd, const std::vector<std::string> &tokens); //repetida linea 108
 			void	TopicCommand(int client_fd, const std::vector<std::string> &tokens);
 
+
+
+			void 	InfoCommand(int client_fd, std::vector<std::string> &tokens);
+
+			void    KickCommand(int client_fd, std::vector<std::string> &tokens);
+
+			void	InviteCommand(int client_fd, std::vector<std::string> &tokens);
+
+			void	NamesCommand(int client_fd, std::vector<std::string> &tokens);
+
+			void	ListCommand(int client_fd, std::vector<std::string> &tokens);
+
+			void	ModesCommand(int client_fd, std::vector<std::string> &tokens);
+
+			void	handleInvideMode(Channel *channel, Client *client, bool checkMode);
+			void	handleTopicMode(Channel *channel, Client *client, bool checkMode);
+			void	handleLimitMode(Channel *channel, Client *client, bool checkMode, const std::string& parameter);
+			void	handleKeyMode(Channel *channel, Client *client, bool checkMode, const std::string& parameter);
+			void	handleUnknownMode(Channel *channel, Client *client, bool checkMode);
+			
+
+			
 			// WELCOME MESSAGES
 			void	sendWelcomeMessages(int client_fd);	// Send welcome messages to registered client
 
 			// UTILS
 			std::vector<std::string> splitMessage(const std::string &message, char delimiter); // Split the message
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			//======================================================================================
+			// === FUNCIONES AUXILIARES PARA PRIVMSG - CHECKEAR CON PABLO ===
+			//======================================================================================
+	
+			
+			Client*		findClientByNickname(const std::string& nickname);			// PENDIENTE: Find clientE by nickname - Returns pointer or nullptr
+			Channel*	findChannelByName(const std::string& name);					// PENDIENTE: Find channel by name - Returns pointer or nullptr  
+			//bool		channelExists(const std::string& name);						// PENDIENTE: Checker if channel exists - Returns true/false
+								
+			//======================================================================================
 };

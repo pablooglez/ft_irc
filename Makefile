@@ -6,23 +6,24 @@
 #    By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/05/29 18:35:50 by pablogon          #+#    #+#              #
-#    Updated: 2025/06/25 16:36:09 by pablogon         ###   ########.fr        #
+#    Updated: 2025/07/07 16:24:13 by pablogon         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = ircserv
 
-SRC = src/Channel.cpp src/Client.cpp src/RPL.cpp src/Server.cpp \
-	src/cmd/join.cpp src/cmd/nick.cpp src/cmd/pass.cpp src/cmd/privmsg.cpp \
-	src/cmd/quit.cpp src/cmd/user.cpp src/cmd/topic.cpp \
-	src/main.cpp src/utils.cpp
+SRC = src/Channel.cpp src/Client.cpp src/Server.cpp src/main.cpp src/utils.cpp \
+	src/cmd/quit.cpp src/cmd/pass.cpp src/cmd/nick.cpp src/cmd/join.cpp \
+	src/cmd/names.cpp src/cmd/user.cpp src/cmd/privmsg.cpp src/cmd/topic.cpp \
+	src/cmd/kick.cpp src/cmd/info.cpp src/cmd/list.cpp src/cmd/invite.cpp \
+	src/RPL.cpp src/cmd/mode.cpp
 
 OBJ = $(SRC:.cpp=.o)
 
 RM = rm -f
 
 CC = c++
-CPPFLAGS = -Wall -Wextra -Werror -std=c++98 #-fsanitize=address
+CPPFLAGS = -Wall -Wextra -Werror -std=c++98 
 
 #-------COLORS---------#
 BOLD	:= \033[1m

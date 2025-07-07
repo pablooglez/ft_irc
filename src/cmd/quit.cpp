@@ -3,10 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   quit.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 18:18:05 by pablogon          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2025/06/25 16:11:41 by pablogon         ###   ########.fr       */
+=======
+/*   Updated: 2025/07/02 17:37:39 by albelope         ###   ########.fr       */
+>>>>>>> Basura-Channel
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +50,11 @@ void	Server::QuitCommand(int client_fd, const std::vector<std::string> &tokens)
 
 			if (was_operator && channel->getClientCount() > 0)	// If it was an operator and there are still users, promote the oldest one.
 			{
+<<<<<<< HEAD
 				std::vector<Client*> remaining_clients = channel->getClients();
+=======
+				std::vector<Client*> remaining_clients = channel->getMembers();
+>>>>>>> Basura-Channel
 
 				bool has_operator = true;
 				
@@ -65,10 +73,17 @@ void	Server::QuitCommand(int client_fd, const std::vector<std::string> &tokens)
 					channel->addOperator(new_operator);
 					
 					// Notify operator of promotion
+<<<<<<< HEAD
 					std::string mode_msg = ":" + getServerName() + " MODE " + channel->getName() + "+o" + new_operator->getNickName() + "\r\n";
 					
 					// Send to all channel users
 					const std::vector<Client*> &channel_clients = channel->getClients();
+=======
+					std::string mode_msg = ":" + getServerName() + " MODE " + channel->getChannelName() + "+o" + new_operator->getNickName() + "\r\n";
+					
+					// Send to all channel users
+					const std::vector<Client*> &channel_clients = channel->getMembers();
+>>>>>>> Basura-Channel
 
 					for (std::vector<Client*>::const_iterator it = channel_clients.begin(); it != channel_clients.end(); ++it)
 					{
@@ -79,7 +94,11 @@ void	Server::QuitCommand(int client_fd, const std::vector<std::string> &tokens)
 
 			if (channel->getClientCount() == 0)		// If the channel is empty, delete it from the server.
 			{
+<<<<<<< HEAD
 				_channels.erase(channel->getName());
+=======
+				_channels.erase(channel->getChannelName());
+>>>>>>> Basura-Channel
 			}
 		}
 	}

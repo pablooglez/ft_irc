@@ -3,23 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 17:05:24 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/07 16:31:57 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/23 13:03:37 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/Server.hpp"
-#include <algorithm>
-#include <cctype>
-#include "../include/RPL.hpp"
 
 Server::Server(int port, const std::string &password)
 {
 	this->_port = port;
 	this->_password = password;
-	this->_server_name = "localhost";
 	this->_server_fd = -1;
 	this->_running = false;
 }
@@ -39,22 +35,9 @@ const std::string	&Server::GetPassword() const
 	return this->_password;
 }
 
-const std::string& Server::getServerName() const
-{
-	return this->_server_name;
-}
-
 int	Server::getServerFd() const
 {
 	return this->_server_fd;
-}
-
-std::string Server::getClientNick(int client_fd) const
-{
-	std::map<int, Client>::const_iterator it = _clients.find(client_fd);
-	if (it != _clients.end() && !it->second.getNickName().empty())
-		return it->second.getNickName();
-	return "*";  // Client without nicknmae
 }
 
 bool	Server::setupSocket()
@@ -149,9 +132,6 @@ void	Server::cleanup()
 	this->_client_fds.clear();
 
 	this->_poll_fds.clear(); // Clean poll array
-	
-	this->_client_buffers.clear(); // Clean client buffers
-	this->_clients.clear(); // Clean client objects
 
 	if (this->_server_fd != -1) // Close server socket
 	{
@@ -250,14 +230,10 @@ void	Server::handleNewConnection()
 	char	client_ip[INET_ADDRSTRLEN];
 	inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, INET_ADDRSTRLEN);
 	
-	// Create Client object
-	createClientObject(client_fd, std::string(client_ip));
-	
 	std::cout << "New client connected:" << std::endl;
 	std::cout << "  - FD: " << client_fd << std::endl;
 	std::cout << "  - IP: " << client_ip << std::endl;
 	std::cout << "  - Port: " << ntohs(client_addr.sin_port) << std::endl;
-	std::cout << "  - Client object created" << std::endl;
 	std::cout << "  - Total clients: " << this->_client_fds.size() << std::endl;
 }
 
@@ -318,10 +294,6 @@ void	Server::removeClient(int client_fd)
 	_client_buffers.erase(client_fd);
 	std::cout << "Client buffer removed" << std::endl;
 
-	// Remove client object
-	_clients.erase(client_fd);
-	std::cout << "Client object removed" << std::endl;
-
 	if (close(client_fd) == -1)
 		std::cerr << "Error: Failed to close client socket" << std::endl;
 	else
@@ -377,217 +349,25 @@ void	Server::parceIRCMessage(int client_fd, const std::string &message, char del
 	}
 
 	std::string command = tokens[0];
+
 	std::transform(command.begin(), command.end(), command.begin(), ::toupper);
 	std::cout << "Command: " << command << std::endl;
 
-	Client *client = findClientByFd(client_fd);
-	if (!client)
-	{
-		std::cerr << "Error: Client not found for fd " << client_fd << std::endl;
-		return;
-	}
-
-	// Commands allowed during registration process
 	if (command == "PASS")
 		PassCommand(client_fd, tokens);
-	else if (command == "NICK")
-		NickCommand(client_fd, tokens);
-	else if (command == "USER")
-		UserCommand(client_fd, tokens);
 	else if (command == "QUIT")
 		QuitCommand(client_fd, tokens);
-	
-	// Commands that require full registration
-	else if (!client->isRegistered())
-	{
-		// Send standard IRC error code without custom messages
-		std::string error = ":localhost 451 * :You have not registered\r\n";
-		client->sendMessage(error);
-		return;
-	}
+	else if (command == "NICK")
+		NickCommand(client_fd, tokens);
 	else if (command == "JOIN")
 		JoinCommand(client_fd, tokens);
-	else if (command == "KICK")
-		KickCommand(client_fd, tokens);
+	/*else if (command == "KICK")
 	else if (command == "INFO")
-		InfoCommand(client_fd, tokens);
 	else if (command == "TOPIC")
-		TopicCommand(client_fd, tokens);
 	else if (command == "PRIVMSG")
 		PrivmsgCommand(client_fd, tokens);
 	else if (command == "INVITE")
-		InviteCommand(client_fd, tokens);
 	else if (command == "LIST")
-		ListCommand(client_fd, tokens);
 	else if (command == "NAMES")
-		NamesCommand(client_fd, tokens);
-	else if (command == "MODE")
-		ModesCommand(client_fd, tokens);
-}
-
-
-// CLIENT MANAGEMENT FUNCTIONS
-
-void Server::createClientObject(int client_fd, const std::string &hostname)
-{
-	Client new_client(client_fd, hostname);
-	_clients[client_fd] = new_client;
-
-	std::cout << "Client object created for FD: " << client_fd << " with hostname: " << hostname << std::endl;
-
-}
-
-Client* Server::findClientByFd(int client_fd)
-{
-	std::map<int, Client>::iterator it = _clients.find(client_fd);
-	if (it != _clients.end())
-	return &(it->second);
-	return NULL;
-}
-
-bool Server::isNicknameInUse(const std::string &nickname)
-{
-	if (nickname.empty())
-	return false;
-	
-	for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); ++it)
-	{
-		if (it->second.getNickName() == nickname)
-		return true;
-	}
-	return false;
-}
-
-bool Server::isValidNickname(const std::string &nickname)
-{
-	if (nickname.empty() || nickname.length() > 9)	// Check if nickname is empty or too long (RFC 2812: max 9 characters)
-	return false;
-
-	char first = nickname[0];	// First character must be a letter or special character (not a digit)
-	
-	if (!std::isalpha(first) && first != '_' && first != '[' && first != ']' && first != '\\' && first != '`' && first != '^' && first != '{' && first != '}')
-	return false;
-	
-	for (size_t i = 0; i < nickname.length(); ++i)	// Check all characters are valid
-	{
-		char c = nickname[i];
-		if (!std::isalnum(c) && c != '_' && c != '-' && c != '[' && c != ']' && c != '\\' && c != '`' && c != '^' && c != '{' && c != '}')
-		return false;
-	}
-	return true;
-}
-
-// WELCOME MESSAGES
-void	Server::sendWelcomeMessages(int client_fd)
-{
-	Client *client = findClientByFd(client_fd);
-	if (!client)
-		return;
-
-	// RPL_WELCOME (001)
-	std::string welcome = RPL::RPL_WELCOME(getServerName(), client->getNickName(), client->getUserName(), client->getHostName());
-	client->sendMessage(welcome);
-
-	// RPL_YOURHOST (002)
-	std::string yourhost = RPL::RPL_YOURHOST(getServerName(), client->getNickName(), getServerName(), "1.0");
-	client->sendMessage(yourhost);
-
-	// RPL_CREATED (003)
-	std::string created = RPL::RPL_CREATED(getServerName(), client->getNickName(), "June 20, 2025");
-	client->sendMessage(created);
-
-	// RPL_MYINFO (004)
-	std::string myinfo = RPL::RPL_MYINFO(getServerName(), client->getNickName(), getServerName(), "1.0", "i", "o");
-	client->sendMessage(myinfo);
-	
-	std::cout << "Welcome messages sent to client " << client_fd << " (" << client->getNickName() << ")" << std::endl;
-}
-
-
-//===============================================================================================
-//=== 		FUNCIONES AUXILIARES PARA PRIVMSG  CHECKEAR CON PABLIT ==============================
-//==== LAS Q TENGO EN CHANNEL SON PARA BUSCAR DENTRO DEL CANAL NO EN LOS SERVIDORES DEL CANAL ==
-//===============================================================================================
-
-Client* Server::findClientByNickname(const std::string& nickname)
-{
-	if (nickname.empty())
-		return NULL;
-		
-	for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); ++it)
-	{
-		if (it->second.getNickName() == nickname)
-			return &(it->second);
-	}
-	return NULL;
-}
-
-Channel* Server::findChannelByName(const std::string& name)
-{
-	if (name.empty())
-		return NULL;
-		
-	std::map<std::string, Channel>::iterator it_channel = _channels.find(name);
-	if (it_channel != _channels.end())
-		return &(it_channel->second);
-	return NULL;
-}
-
-/*bool Server::channelExists(const std::string& name)
-{
-	if (name.empty())
-		return false;
-		
-	return _channels.find(name) != _channels.end();
-}*/// Sirve solo para saber si el canal existe. Es casi inútil porque findChannelByName ya lo hace mejor.
-// Puede servir para logs o cosas rápidas donde no necesitas el canal.
-
-
-
-
-
-
-
-
-//NEW CODE OF PABLO
-
-// CHANNEL MANAGEMENT FUNCTIONS
-
-Channel* Server::findOrCreateChannel(const std::string &channel_name)
-{
-	std::map<std::string, Channel>::iterator it = _channels.find(channel_name);
-	if (it != _channels.end())
-	{
-		return &(it->second);
-	}
-	
-	// Create new channel
-	Channel new_channel(channel_name);
-	_channels[channel_name] = new_channel;
-	std::cout << "New channel created: " << channel_name << std::endl;
-	
-	return &_channels[channel_name];
-}
-
-Channel* Server::findChannel(const std::string &channel_name)
-{
-	std::map<std::string, Channel>::iterator it = _channels.find(channel_name);
-	if (it != _channels.end())
-		return &(it->second);
-	return NULL;
-}
-
-bool Server::channelExists(const std::string &channel_name)
-{
-	return _channels.find(channel_name) != _channels.end();
-}
-
-void Server::removeChannelIfEmpty(const std::string &channel_name)
-{
-	std::map<std::string, Channel>::iterator it = _channels.find(channel_name);
-	if (it != _channels.end() && it->second.isEmpty())
-	{
-		_channels.erase(it);
-		std::cout << "Empty channel removed: " << channel_name << std::endl;
-	}
+	else if (command == "MODE")*/
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 16:19:42 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/18 20:12:25 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/06/19 12:49:20 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,7 +186,7 @@ bool	Client::isInChannel(const std::string &channel_name) const
 {
 	for (std::vector<Channel*>::const_iterator it = this->_channels.begin(); it != this->_channels.end(); ++it)
 	{
-		if ((*it)->getName() == channel_name)
+		if ((*it)->getChannelName() == channel_name)
 			return true;
 	}
 	return false;

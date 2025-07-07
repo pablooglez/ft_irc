@@ -3,10 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 12:15:43 by pablogon          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2025/06/27 18:57:40 by pablogon         ###   ########.fr       */
+=======
+/*   Updated: 2025/07/02 17:49:12 by albelope         ###   ########.fr       */
+>>>>>>> Basura-Channel
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,11 +42,18 @@ void Server::JoinCommand(int client_fd, const std::vector<std::string> &tokens)
 
 	std::string channel_name = tokens[1];
 	
+<<<<<<< HEAD
 	if (channel_name.empty() || channel_name[0] != '#')	// Channel name MUST start with # - no auto-correction
 	{
 		std::string error = RPL::ERR_NOSUCHCHANNEL(getServerName(), client->getNickName(), channel_name);
 		client->sendMessage(error);
 		return;
+=======
+	// Ensure channel name starts with #
+	if (channel_name[0] != '#')
+	{
+		channel_name = "#" + channel_name;
+>>>>>>> Basura-Channel
 	}
 
 	// Validate channel name
@@ -62,7 +73,11 @@ void Server::JoinCommand(int client_fd, const std::vector<std::string> &tokens)
 	}
 
 	// Check if user is already in the channel
+<<<<<<< HEAD
 	if (channel->hasClient(client))
+=======
+	if (channel->hasClient(client->getNickName())) // pablo tiene otra distitna
+>>>>>>> Basura-Channel
 	{
 		// User is already in channel, no error in IRC protocol, just ignore
 		return;
@@ -92,7 +107,11 @@ void Server::JoinCommand(int client_fd, const std::vector<std::string> &tokens)
 	}
 
 	// Add user to channel
+<<<<<<< HEAD
 	if (!channel->addClient(client))
+=======
+	if (!channel->addMember(client)) //pablo tiene addClient
+>>>>>>> Basura-Channel
 	{
 		std::cerr << "Error: Failed to add client to channel " << channel_name << std::endl;
 		return;
@@ -113,6 +132,7 @@ void Server::JoinCommand(int client_fd, const std::vector<std::string> &tokens)
 	client->sendMessage(join_response);
 
 	// Broadcast JOIN to all other users in the channel
+<<<<<<< HEAD
 	const std::vector<Client*> &channel_clients = channel->getClients();
 	for (std::vector<Client*>::const_iterator it = channel_clients.begin(); it != channel_clients.end(); ++it)
 	{
@@ -120,6 +140,12 @@ void Server::JoinCommand(int client_fd, const std::vector<std::string> &tokens)
 		{
 			(*it)->sendMessage(join_response);
 		}
+=======
+	const std::vector<Client*> &channel_clients = channel->getMembers();
+	for (std::vector<Client*>::const_iterator it = channel_clients.begin(); it != channel_clients.end(); ++it)
+	{
+		(*it)->sendMessage(join_response);
+>>>>>>> Basura-Channel
 	}
 	
 	// Send topic information

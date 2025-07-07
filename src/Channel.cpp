@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 16:23:01 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/07 21:39:53 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/07 21:55:22 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ bool	Channel::addMember(Client* member)
 	if (isMember(member))
 		return false;
 
-		_members.push_back(member);
+	_members.push_back(member);
 	return true;
 }
 

@@ -1,21 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   botcommand.cpp                                     :+:      :+:    :+:   */
+/*   BotCmd.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 20:17:24 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/06 22:14:25 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/07 13:54:13 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
-#include "botcommand.hpp"
+#include "BotCmd.hpp"
 #include <unistd.h> // uso sleep pa las pausas
 #include <vector>   // vector pa guardar las frases
 
-// esto es pra conotrlar si han pedido parar la historia
+// esto es pra conotrlar si han pedido parar la Zuperhistoria
 static bool stopRequested = false;
 
 // esta funcion manda cada frase una por una con tiempo entre ellas
@@ -96,7 +96,7 @@ void handleCommands(Bot* bot, const std::string& text)
         botHackCommand(bot, text);
         return;
     }
-    // si han puesto !42story arranco la historia
+    // si  pones !42story arranco la historia
     if (text == "!42")
     {
         story42(bot);
@@ -106,7 +106,7 @@ void handleCommands(Bot* bot, const std::string& text)
     // si han puesto !stop marco que hay que parar
     if (text == "!stop")
     {
-        stopRequested = true; // activo que hay que parar
+        stopRequested = true; // activo la parada
         bot->safeSend("PRIVMSG " + bot->getChannel() + " :Stop request received.\r\n");
         return;
     }

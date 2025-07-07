@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   bot.cpp                                            :+:      :+:    :+:   */
+/*   Bot.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/03 20:59:11 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/06 22:15:00 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/07 12:18:33 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "bot.hpp"
+#include "Bot.hpp"
 #include <sys/socket.h>   // Para crear sockets
 #include <netinet/in.h>   // Para configurar la dirección IP
 #include <arpa/inet.h>    // Para convertir la IP a binario
@@ -19,7 +19,7 @@
 #include <cstdlib>        // Para atoi (convertir strings a números)
 #include <poll.h>         // Para esperar eventos con poll()
 #include <fcntl.h>          //marcar socket O_NONBLOCK
-#include "botcommand.hpp"
+#include "BotCmd.hpp"
 #include <errno.h>
 
 
@@ -35,7 +35,7 @@ Bot::Bot(const std::string& ip, int port, const std::string& pass, const std::st
 }
 
 Bot::~Bot() {
-    if (_fd != -1)       // Si el socket está abierto
+    if (_fd != -1)       // Si el socket its abierto
         close(_fd);      // Lo cerramos correctamente
 }
 
@@ -43,19 +43,19 @@ Bot::~Bot() {
 
 std::string Bot::getChannel() const
 {
-    return _channel;
+    return _channel; //Zupergetter dechannel
 }
 
 
-// safeSend es una función que garantiza que se envíe todo el mensaje, aunque el socket envíe solo parte de los datos en un intento.
+// safeSend es una func que garantiza que se envie todo el mensaje, aunque el socket envie solo parte de los datos en un intento.
 // A veces send() puede enviar menos bytes de los que le pedimos, así que aquí nos aseguramos de enviar el mensaje completo repitiendo hasta que todo salga.
 bool Bot::safeSend(const std::string& msg)
 {
-    ssize_t total = 0; // total almacena cuántos bytes hemos enviado hasta ahora.
+    ssize_t total = 0; // total almacena de cuantos bytes hemos enviado hasta ahora.
     while (total < (ssize_t)msg.size()) // mientras no hayamos enviado todo el mensaje...
     {
         ssize_t n = send(_fd, msg.c_str() + total, msg.size() - total, 0); // intentamos enviar la parte que falta.
-        if (n <= 0) return false; // si send() devuelve 0 o un valor negativo, es que ha fallado, así que salimos con error.
+        if (n <= 0) return false; // si send() devuelve 0 o un valor negativo, es que ha fallado, asi q salimos con error.
         total += n; // sumamos los bytes enviados para seguir desde el siguiente.
     }
     return true; // cuando hemos enviado todo el mensaje, devolvemos true.
@@ -72,7 +72,7 @@ void Bot::start() {
     std::cout << "Socket created for bot" << std::endl;
 
     fcntl(_fd, F_SETFL, O_NONBLOCK);
-    // Esta línea pone el socket en modo no bloqueante ➜ significa que las operaciones de lectura y escritura no se van a quedar esperando si no hay datos.
+    // Esta linea pone el socket en modo no bloqueante ➜ significa que las operaciones de lectura y escritura no se van a quedar esperando si no hay datos.
     // En los sockets no bloqueantes ➜ si no hay datos, recv() no se queda colgado, simplemente devuelve un error temporal.
     // Esto es obligatorio en el proyecto para poder usar poll() de forma eficiente y que todo el sistema sea reactivo y no se cuelgue.
 
@@ -83,7 +83,7 @@ void Bot::start() {
     // sockaddr_in es la estructura que me pide el sistema para poder conectarme.
     // Aquí voy a guardar:
     // - El tipo de red que voy a usar (IPv4 en este caso).
-    // - La dirección IP del servidor (por ejemplo: 127.0.0.1).
+    // - La dir IP del servidor (por ejemplo: 127.0.0.1).
     // - El puerto al que me quiero conectar (por ejemplo: 6667).
 
     serverAddr.sin_family = AF_INET; // tipo de red IPv4
@@ -113,7 +113,7 @@ void Bot::start() {
 
         std::cout << "Waiting for connection to complete..." << std::endl;
 
-        if (poll(&pfd, 1, 5000) <= 0) // Timeout de 5 segundos
+        if (poll(&pfd, 1, 5000) <= 0) // Timeout de five segundos
         {
             std::cerr << "Error: connection timeout or poll() failed" << std::endl;
             exit(1);
@@ -129,7 +129,7 @@ void Bot::start() {
     }
     std::cout << "Bot connected successfully!" << std::endl;
 
-    // Después de conectar al servidor, ahora mando los comandos IRC obligatorios para iniciar sesión.
+    // Desp de conectar al servidor, ahora mando los comandos IRC obligatorios para iniciar la sesion.
     // Enviar PASS ➜ mando la contraseña que necesita el servidor.
     std::string passCmd = "PASS " + _pass + "\r\n";
     send(_fd, passCmd.c_str(), passCmd.length(), 0);
@@ -179,7 +179,7 @@ void Bot::start() {
         buffer[n] = '\0';
         _bufferBot.append(buffer);
 
-        /* Procesar líneas completas */
+        /* Procesar lineas completas */
         size_t pos;
         while ((pos = _bufferBot.find("\r\n")) != std::string::npos)
         {
@@ -200,7 +200,7 @@ void Bot::start() {
 /* -------------------- detección PING en función aparte -------------- */
 bool Bot::handlePing(const std::string& line)
 {
-    // Este método detecta si el mensaje recibido es un PING.
+    // Esto detecta si el mensaje recibido es un PING.
     // Un PING puede tener dos formatos:
     // Formato 1: "PING :algo" ➜ mensaje directo
     // Formato 2: ":servidor PING :algo" ➜ mensaje precedido por el nombre del servidor
@@ -231,7 +231,7 @@ bool Bot::handlePing(const std::string& line)
 
 void Bot::processMessage(const std::string& line)
 {
-    // Este método procesa los mensajes PRIVMSG que lleguen al canal donde está el bot.
+    // Esto procesa los mensajes PRIVMSG que lleguen al canal donde está el bot.
     // Solo nos interesan los mensajes enviados al canal, no los privados ni de otros sitios.
 
     if (line.find("PRIVMSG " + _channel) == std::string::npos)

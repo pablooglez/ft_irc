@@ -1,19 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   botcommand.hpp                                     :+:      :+:    :+:   */
+/*   BotCmd.hpp  	                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 20:42:26 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/06 20:57:12 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/07 11:01:02 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef BOTCOMMAND_HPP
 #define BOTCOMMAND_HPP
 
-#include "bot.hpp"
+#include "Bot.hpp"
 #include <vector>
 
 

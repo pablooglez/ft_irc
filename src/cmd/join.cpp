@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 12:15:43 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/07 16:41:46 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/08 18:18:20 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void Server::JoinCommand(int client_fd, const std::vector<std::string> &tokens)
 	}
 
 	// Check if user is already in the channel
-	if (channel->hasClient(client->getNickName())) // pablo tiene otra distitna
+	if (channel->hasClient(client->getNickName())) // pablo tiene otra distinta
 	{
 		// User is already in channel, no error in IRC protocol, just ignore
 		return;
@@ -108,11 +108,10 @@ void Server::JoinCommand(int client_fd, const std::vector<std::string> &tokens)
 		std::cout << "Client " << client->getNickName() << " is now operator of " << channel_name << std::endl;
 	}
 
-	// Send JOIN confirmation to the user
+	// Send JOIN confirmation to the user and broadcast to others
 	std::string join_response = ":" + client->getNickName() + "!" + client->getUserName() + "@" + client->getHostName() + " JOIN " + channel_name + "\r\n";
-	client->sendMessage(join_response);
-
-	// Broadcast JOIN to all other users in the channel
+	
+	// Send to all users in the channel (including the user who joined)
 	const std::vector<Client*> &channel_clients = channel->getMembers();
 	for (std::vector<Client*>::const_iterator it = channel_clients.begin(); it != channel_clients.end(); ++it)
 	{

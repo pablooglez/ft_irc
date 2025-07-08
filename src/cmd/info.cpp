@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 20:27:12 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/07 21:29:36 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/08 19:20:50 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void Server::InfoCommand(int client_fd, std::vector<std::string> &tokens)
 
 client->sendMessage(RPL::RPL_INFO(serverName, nickName, "==================================================================="));
 client->sendMessage(RPL::RPL_INFO(serverName, nickName, "|                           FT_IRC SERVER                          |"));
-client->sendMessage(RPL::RPL_INFO(serverName, nickName, "|                        42 Telefonica Project                     |"));
+client->sendMessage(RPL::RPL_INFO(serverName, nickName, "|                             42 Project                           |"));
 client->sendMessage(RPL::RPL_INFO(serverName, nickName, "==================================================================="));
 
 std::stringstream port_ss;
@@ -56,7 +56,6 @@ client->sendMessage(RPL::RPL_INFO(serverName, nickName, "-----------------------
 client->sendMessage(RPL::RPL_INFO(serverName, nickName, "  Supported Modes  :"));
 client->sendMessage(RPL::RPL_INFO(serverName, nickName, "      +i  invite-only      |   +t  topic restricted"));
 client->sendMessage(RPL::RPL_INFO(serverName, nickName, "      +k  password         |   +l  user limit"));
-client->sendMessage(RPL::RPL_INFO(serverName, nickName, "  Max Clients      : 200")); // SERIA BUENA IDEA PONER UN MAX DE CLIENTES
 client->sendMessage(RPL::RPL_INFO(serverName, nickName, "-------------------------------------------------------------------"));
 
 std::stringstream users_ss;

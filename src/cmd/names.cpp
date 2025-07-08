@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 13:02:02 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/07 21:31:01 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/08 19:09:59 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,23 +16,31 @@ void	Server::NamesCommand(int client_fd, std::vector<std::string> &tokens)
 {
 	Client* client = findClientByFd(client_fd);
 
-	if (!client || !client->isRegistered())
+	if (!client)
 	{
-		std::cout << "Erro:RPL IMPLE" << std::endl;
+		return;
+	}
+
+	if (!client->isRegistered())
+	{
+		std::string error = RPL::ERR_NOTREGISTERED(getServerName(), client->getNickName());
+		client->sendMessage(error);
 		return;
 	}
 	
 	if (tokens.size() <= 1)
 	{
-		std::cout << "we need know the channel name" << std::endl;
-		return ;
+		std::string error = RPL::ERR_NEEDMOREPARAMS(getServerName(), client->getNickName(), "NAMES");
+		client->sendMessage(error);
+		return;
 	}
 	
 	std::string channelName = tokens[1];
 
 	if (!Channel::isValidChannelName(channelName))
 	{
-		std::cout << "Error: Invalid channel name" << std::endl;
+		std::string error = RPL::ERR_NOSUCHCHANNEL(getServerName(), client->getNickName(), channelName);
+		client->sendMessage(error);
 		return;
 	}
 

@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 22:44:58 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/08 18:18:25 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/09 21:14:19 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,11 +121,51 @@ void	Server::KickCommand(int client_fd, std::vector<std::string> &tokens)
 
 	channelOfKick->broadcast(KickMessage, NULL);
 
+	// Verify if the kicked user is an operator BEFORE removal
+	bool was_operator = channelOfKick->isOperator(clientToKick);
+
 	if (channelOfKick->kickUser(kickingClient, clientToKick))
 	{
 		clientToKick->removeChannel(channelOfKick);
 		
-		if (channelOfKick->isEmpty())
+		if (was_operator && channelOfKick->getClientCount() > 0)	// If it was an operator and there are still users, promote the oldest one.
+		{
+			std::vector<Client*> remaining_clients = channelOfKick->getMembers();
+
+			bool has_operator = false;
+			
+			for (size_t j = 0; j < remaining_clients.size(); ++j)
+			{
+				if (channelOfKick->isOperator(remaining_clients[j]))
+				{
+					has_operator = true;
+					break;
+				}
+			}
+
+			if (!has_operator && !remaining_clients.empty())	// If there are no operators, promote to the first (oldest) one.
+			{
+				Client* new_operator = remaining_clients[0];
+				channelOfKick->addOperator(new_operator);
+				
+				// Notify operator of promotion
+				std::string mode_msg = ":" + getServerName() + " MODE " + channelOfKick->getChannelName() + " +o " + new_operator->getNickName() + "\r\n";
+				
+				// Send to all channel users
+				const std::vector<Client*> &channel_clients = channelOfKick->getMembers();
+
+				for (std::vector<Client*>::const_iterator it = channel_clients.begin(); it != channel_clients.end(); ++it)
+				{
+					(*it)->sendMessage(mode_msg);
+				}
+				
+				std::cout << "Auto-promoted " << new_operator->getNickName() << " to operator in " << channelName << std::endl;
+			}
+		}
+
+		if (channelOfKick->getClientCount() == 0)	// If the channel is empty, delete it from the server.
+		{
 			_channels.erase(channelName);
+		}
 	}
 }

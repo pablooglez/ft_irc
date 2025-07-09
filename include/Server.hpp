@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:37:38 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/08 20:28:26 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/09 20:44:28 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,6 +118,7 @@ class Server
 			void		UserCommand(int client_fd, const std::vector<std::string> &tokens);
 			void		QuitCommand(int client_fd, const std::vector<std::string> &tokens);
 			void		JoinCommand(int client_fd, const std::vector<std::string> &tokens);
+			void		PartCommand(int client_fd, std::vector<std::string> &tokens);
 			void		TopicCommand(int client_fd, const std::vector<std::string> &tokens);
 			void		PrivmsgCommand(int client_fd, const std::vector<std::string> &tokens);
 			void		InfoCommand(int client_fd, std::vector<std::string> &tokens);

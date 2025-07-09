@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 17:05:24 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/08 18:56:23 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/09 20:44:33 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -402,6 +402,8 @@ void	Server::parceIRCMessage(int client_fd, const std::string &message, char del
 	}
 	else if (command == "JOIN")
 		JoinCommand(client_fd, tokens);
+	else if (command == "PART")
+		PartCommand(client_fd, tokens);
 	else if (command == "KICK")
 		KickCommand(client_fd, tokens);
 	else if (command == "INFO")

@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 20:27:12 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/08 19:20:50 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/09 20:42:32 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ client->sendMessage(RPL::RPL_INFO(serverName, nickName, "  Active Channels  : " 
 client->sendMessage(RPL::RPL_INFO(serverName, nickName, "-------------------------------------------------------------------"));
 client->sendMessage(RPL::RPL_INFO(serverName, nickName, "  Supported Commands:"));
 client->sendMessage(RPL::RPL_INFO(serverName, nickName, "      PASS   |   NICK   |   USER   |   JOIN  |   KICK    | INVITE"));
-client->sendMessage(RPL::RPL_INFO(serverName, nickName, "      PRIVMSG|   QUIT   |   LIST   |   NAMES |   TOPIC"));
+client->sendMessage(RPL::RPL_INFO(serverName, nickName, "      PRIVMSG|   QUIT   |   LIST   |   NAMES |   TOPIC   |  PART "));
 client->sendMessage(RPL::RPL_INFO(serverName, nickName, "-------------------------------------------------------------------"));
 client->sendMessage(RPL::RPL_INFO(serverName, nickName, "  Project Authors:"));
 client->sendMessage(RPL::RPL_INFO(serverName, nickName, "      @Pablogon  - Pablo Gonzalez"));

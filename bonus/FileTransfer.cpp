@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   FileTransfer.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 11:05:43 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/07 13:52:32 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/09 17:12:51 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "FileTransfer.hpp"
+#include "include/FileTransfer.hpp"
 
 
 FileTransfer::FileTransfer(std::string filename, std::string sendernick,

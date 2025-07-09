@@ -6,11 +6,11 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 21:01:20 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/07 17:53:23 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/09 17:12:57 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Bot.hpp"
+#include "include/Bot.hpp"
 #include <iostream>
 #include <cstdlib> // para atoi
 

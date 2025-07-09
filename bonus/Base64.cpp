@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Base64.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 12:19:59 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/07 12:56:44 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/09 17:12:34 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Base64.hpp"
+#include "include/Base64.hpp"
 
 
 //	me toca en examen y me crujen mijo

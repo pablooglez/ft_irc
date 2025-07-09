@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:37:38 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/07 21:02:30 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/08 20:28:26 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,9 +130,10 @@ class Server
 			// MODE HANDLERS
 			void		handleInvideMode(Channel *channel, Client *client, bool checkMode);
 			void		handleTopicMode(Channel *channel, Client *client, bool checkMode);
-			void		handleLimitMode(Channel *channel, Client *client, bool checkMode, const std::string& parameter);
-			void		handleKeyMode(Channel *channel, Client *client, bool checkMode, const std::string& parameter);
+			void		handleLimitMode(Channel *channel, Client *client, bool checkMode, const std::string &parameter);
+			void		handleKeyMode(Channel *channel, Client *client, bool checkMode, const std::string &parameter);
 			void		handleUnknownMode(Channel *channel, Client *client, bool checkMode);
+			void		handleOperatorMode(Channel *channel, Client *client, bool checkMode, const std::string &parameter);
 
 			// WELCOME MESSAGES
 			void		sendWelcomeMessages(int client_fd);

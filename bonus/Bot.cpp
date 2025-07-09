@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Bot.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/03 20:59:11 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/07 12:18:33 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/09 17:13:19 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Bot.hpp"
+#include "include/Bot.hpp"
 #include <sys/socket.h>   // Para crear sockets
 #include <netinet/in.h>   // Para configurar la dirección IP
 #include <arpa/inet.h>    // Para convertir la IP a binario
@@ -19,7 +19,7 @@
 #include <cstdlib>        // Para atoi (convertir strings a números)
 #include <poll.h>         // Para esperar eventos con poll()
 #include <fcntl.h>          //marcar socket O_NONBLOCK
-#include "BotCmd.hpp"
+#include "include/BotCmd.hpp"
 #include <errno.h>
 
 

@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 13:02:04 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/07 21:29:15 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/08 20:50:42 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,6 +116,43 @@ void	Server::handleUnknownMode(Channel *channel, Client *client, bool checkMode)
 	(void)checkMode;
 
 	client->sendMessage(RPL::ERR_UNKNOWNMODE(getServerName(), client->getNickName(), "unknown"));
+}
+
+void	Server::handleOperatorMode(Channel *channel, Client *client, bool checkMode, const std::string &parameter)
+{
+	Client *targetClient = findClientByNickname(parameter);	// Search for target customer by nickname
+
+	if (!targetClient)	// Verify if Client exists
+	{
+		std::string error = RPL::ERR_NOSUCHNICK(getServerName(), client->getNickName(), parameter);
+		client->sendMessage(error);
+		return;
+	}
+
+	if (!channel->isMember(targetClient))	// Verify if Client is in the channel
+	{
+		std::string error = RPL::ERR_USERNOTINCHANNEL(getServerName(), client->getNickName(), parameter, channel->getChannelName());
+		client->sendMessage(error);
+		return;
+	}
+
+	std::string modeOpMessage = ":" + client->getNickName() + " MODE " + channel->getChannelName() + " ";
+
+	if (checkMode)	// +o
+	{
+		if (channel->addOperator(targetClient))
+			modeOpMessage += "+o " + parameter;
+		else
+			return;
+	}
+	else	// -o
+	{
+		if (channel->removeOperator(targetClient))
+			modeOpMessage += "-o " + parameter;
+		else
+			return;
+	}
+	channel->broadcast(modeOpMessage, NULL);
 }
 
 void	Server::ModesCommand(int client_fd, std::vector<std::string> &tokens)
@@ -253,6 +290,14 @@ void	Server::ModesCommand(int client_fd, std::vector<std::string> &tokens)
 					break;
 
 				case 'o':
+					if (tokens.size() <= argIndex)
+					{
+						std::string error = RPL::ERR_NEEDMOREPARAMS(getServerName(), client->getNickName(), "MODE");
+						client->sendMessage(error);
+						return;
+					}
+					handleOperatorMode(channel, client, checkMode, tokens[argIndex]);
+					argIndex++;
 					break;
 				
 				default:

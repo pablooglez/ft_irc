@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   BotCmd.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 20:17:24 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/07 13:54:13 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/09 17:12:42 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
-#include "BotCmd.hpp"
+#include "include/BotCmd.hpp"
 #include <unistd.h> // uso sleep pa las pausas
 #include <vector>   // vector pa guardar las frases
 

@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 21:01:20 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/07 12:19:18 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/08 14:02:59 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include <iostream>
 #include <cstdlib> // para atoi
 
+int	g_global = 0;
 int main(int argc, char **argv)
 {
     if (argc != 5)

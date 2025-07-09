@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:37:38 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/07 13:01:45 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/08 13:40:57 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,9 +45,18 @@ extern int	g_global;
 # include "RPL.hpp"
 
 
+#ifdef BONUS
+# include "../bonus/FileManager.hpp"
+# include "../bonus/FileTransfer.hpp"
+# include "../bonus/Base64.hpp"
+# include "../bonus/FileRebuilder.hpp"
+#endif
+
 class Client;
 class Channel;
 class RPL;
+
+
 
 class Server
 {
@@ -67,6 +76,12 @@ class Server
 			std::map<int, Client>		_clients;		// Map of Client objects (fd -> Client)
 
 			std::map<std::string, Channel> _channels;
+
+			#ifdef BONUS
+			FileManager					_fileManager;
+			FileRebuilder 				_fileRebuilder;
+			#endif
+
 
 	public:
 			Server(int port, const std::string &password);
@@ -156,9 +171,13 @@ class Server
 			
 			
 			
-			
-			
-			
+
+			//SENDFILES
+
+			#ifdef BONUS
+			void 		SendFileCommand(int client_fd, const std::vector<std::string> &tokens);
+			#endif
+
 			
 			
 			

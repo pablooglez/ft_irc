@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 18:09:47 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/02 17:40:26 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/08 13:32:41 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,9 +106,46 @@ void	Server::PrivmsgCommand(int client_fd, const std::vector<std::string> &token
 			return;
 		}
 
+		#ifdef BONUS
+		//send
+		// Check if it's a file transfer chunk
+		if (message.find("FILECHUNK") == 0)
+		{
+			std::istringstream iss(message);
+			std::string command, filename, chunk;
+
+			iss >> command >> filename;
+			std::getline(iss, chunk);
+			if (!chunk.empty() && chunk[0] == ' ')
+				chunk = chunk.substr(1);
+
+			target_client->handleFileChunk(filename, chunk);
+			std::cout << "[FILECHUNK] " << filename << " received for " << target_client->getNickName() << std::endl;
+			return;
+		}
+
+		// Check if it's end of transfer
+		if (message.find("FILEEND") == 0)
+		{
+			std::istringstream iss(message);
+			std::string command, filename;
+
+			iss >> command >> filename;
+			target_client->handleFileEnd(filename);
+			std::cout << "[FILEEND] Transfer finished: " << filename << " for " << target_client->getNickName() << std::endl;
+			return;
+		}
+		//
+		#endif
+
+
 		std::string privmsg = ":" + client->getNickName() + "!" + client->getUserName() + "@" + client->getHostName() + " PRIVMSG " + target + " :" + message + "\r\n";
 		target_client->sendMessage(privmsg);
 
 		std::cout << "PRIVMSG from " << client->getNickName() << " to user " << target << ": " << message << std::endl;
+		
+
+		
+	
 	}
 }

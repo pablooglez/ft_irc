@@ -6,11 +6,12 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 12:19:59 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/07 12:56:44 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/08 13:54:03 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Base64.hpp"
+#include "../include/Client.hpp"
 
 
 //	me toca en examen y me crujen mijo
@@ -19,7 +20,7 @@ static const std::string base64_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 										"abcdefghijklmnopqrstuvwxyz"
 										"0123456789+/";
 
-std::string encodeBase64(const std::string &input) {
+std::string Base64::encodeBase64(const std::string &input) {
 	std::string		stringToEncode;
 	unsigned char	originalBytes[3];	// guardar 3 bytes que vamos leyendo del string original
 										// base64 trabaja en bloques de 3 bytes para convertirlos en 4 simbolos
@@ -82,7 +83,7 @@ static int getBase64Index(char c) {
     return (-1);                                         
 }
 
-std::string decodeBase64(const std::string &input) {
+std::string Base64::decodeBase64(const std::string &input) {
     std::string stringToDecode;                          // aqui guardamos el resultado final decodificado
     unsigned char base64Chars[4];                        // guardar 4 caracteres base64 que vamos leyendo
     unsigned char originalBytes[3];                      // guardar los 3 bytes originales que obtenemos

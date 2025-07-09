@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 17:05:24 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/03 10:19:55 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/09 13:59:34 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,13 @@
 #include <algorithm>
 #include <cctype>
 #include "../include/RPL.hpp"
+
+#ifdef BONUS
+# include "../bonus/FileManager.hpp"
+# include "../bonus/FileTransfer.hpp"
+# include "../bonus/Base64.hpp"
+#endif
+
 
 Server::Server(int port, const std::string &password)
 {
@@ -120,6 +127,10 @@ bool	Server::setupSocket()
 
 void	Server::start()
 {
+
+	#ifdef BONUS
+		std::cout << "[BONUS] SENDFILE is enabled in Server.cpp" << std::endl;
+	#endif
 	if (!setupSocket())
 	{
 		std::cerr << "Error: Failed to setup server socket" << std::endl;
@@ -423,6 +434,12 @@ void	Server::parceIRCMessage(int client_fd, const std::string &message, char del
 		NamesCommand(client_fd, tokens);
 	else if (command == "MODE")
 		ModesCommand(client_fd, tokens);
+	#ifdef BONUS
+	else if (command == "SENDFILE")
+		_fileManager.sendFile(*this, *client, tokens[1], tokens[2]);
+	#endif
+
+
 }
 
 
@@ -591,3 +608,6 @@ void Server::removeChannelIfEmpty(const std::string &channel_name)
 		std::cout << "Empty channel removed: " << channel_name << std::endl;
 	}
 }
+
+
+

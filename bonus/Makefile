@@ -6,13 +6,13 @@
 #    By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/06 20:46:56 by albelope          #+#    #+#              #
-#    Updated: 2025/07/07 12:18:14 by albelope         ###   ########.fr        #
+#    Updated: 2025/07/08 12:40:59 by albelope         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = bot
 
-SRC = Bot.cpp BotCmd.cpp FileTransfer.cpp main.cpp
+SRC = Bot.cpp BotCmd.cpp FileTransfer.cpp  FileRebuilder.cpp FileManager.cpp main.cpp
 
 OBJ = $(SRC:.cpp=.o)
 

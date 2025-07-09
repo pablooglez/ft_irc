@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 16:23:01 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/07 21:55:22 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/09 20:10:02 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,9 +117,6 @@ bool	Channel::kickUser(Client* kicker, Client* target)
 		return false;
 	if (!isMember(target))
 		return false;
-	if (kicker == target)
-		return false;
-
 	leaveChannel(target);
 	return true;
 }
@@ -325,8 +322,6 @@ bool	Channel::hasClient(const std::string& nickname) const
 bool	Channel::canKick(Client* kicker, Client* target) const
 {
 	if (kicker == NULL || target == NULL)
-		return false;
-	if (kicker == target)
 		return false;
 	if (!isOperator(kicker))
 		return false;

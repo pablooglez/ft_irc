@@ -6,13 +6,13 @@
 #    By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/06 20:46:56 by albelope          #+#    #+#              #
-#    Updated: 2025/07/09 17:10:16 by pablogon         ###   ########.fr        #
+#    Updated: 2025/07/10 19:17:44 by pablogon         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = bonus
 
-SRC = Bot.cpp BotCmd.cpp FileTransfer.cpp main.cpp
+SRC = Bot.cpp BotCmd.cpp main.cpp
 
 OBJ = $(SRC:.cpp=.o)
 

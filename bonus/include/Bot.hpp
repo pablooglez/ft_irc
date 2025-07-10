@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 12:19:43 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/09 17:16:06 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/10 19:18:05 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,6 @@ class Bot
 
 	public:
 			Bot(const std::string &ip, int port, const std::string &pass, const std::string &channel);
-			/*IP ➜ para saber a qué servidor conectar. Puerto ➜ para saber dónde escuchar.
-			Password ➜ para autenticar al bot. Canal ➜ para saber a qué canal debe unirse.*/
 			~Bot();
 
 		std::string getChannel() const;

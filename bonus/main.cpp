@@ -6,19 +6,19 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 21:01:20 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/09 20:18:29 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/10 19:04:51 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "include/Bot.hpp"
 #include <iostream>
-#include <cstdlib> // atoi
+#include <cstdlib>
 
 int main(int argc, char **argv)
 {
 	if (argc != 5)
 	{
-		std::cerr << "Usage: ./bot <ip> <port> <password> <channel>" << std::endl;
+		std::cerr << "Usage: ./bonus <ip> <port> <password> <channel>" << std::endl;
 		return (1);
 	}
 

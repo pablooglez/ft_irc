@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/25 16:37:01 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/07 16:43:47 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/10 21:22:23 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ void	Server::TopicCommand(int client_fd, const std::vector<std::string> &tokens)
 	}
 	else
 	{
-		if (!channel->isOperator(client))	// Verify that you are a channel operator
+		if (!channel->canSetTopic(client))	// Verify permissions based on channel mode
 		{
 			std::string error = RPL::ERR_CHANOPRIVSNEEDED(getServerName(), client->getNickName(), channel_name);
 			client->sendMessage(error);

@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 13:02:04 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/08 20:50:42 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/10 18:09:05 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,6 +140,11 @@ void	Server::handleOperatorMode(Channel *channel, Client *client, bool checkMode
 
 	if (checkMode)	// +o
 	{
+		if (channel->isOperator(targetClient))	// Check if the Client is already an operator
+		{
+			return;	// The Client is already an operator, do nothing
+		}
+		
 		if (channel->addOperator(targetClient))
 			modeOpMessage += "+o " + parameter;
 		else
@@ -147,6 +152,19 @@ void	Server::handleOperatorMode(Channel *channel, Client *client, bool checkMode
 	}
 	else	// -o
 	{
+		if (!channel->isOperator(targetClient))	// Verify whether the target client is actually an operator
+		{
+			return;	// The customer is not an operator, do nothing.
+		}
+		
+		if (channel->getOperatorCount() <= 1)	// Check if the target client is the last operator on the channel
+		{
+			// The last operator cannot be removed from the channel.
+			std::string error = ":localhost 484 " + client->getNickName() + " " + channel->getChannelName() + " :Cannot remove last operator from channel\r\n";
+			client->sendMessage(error);
+			return;
+		}
+		
 		if (channel->removeOperator(targetClient))
 			modeOpMessage += "-o " + parameter;
 		else

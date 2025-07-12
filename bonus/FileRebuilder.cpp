@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 12:28:20 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/08 13:52:04 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/10 12:18:50 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,9 @@
 
 FileRebuilder::FileRebuilder() {}
 
-FileRebuilder::~FileRebuilder() {}
+FileRebuilder::~FileRebuilder() {
+    _bufferMap.clear(); 
+}
 
 std::string FileRebuilder::buildKey(const std::string& nick, const std::string& filename) const {
     return nick + ":" + filename;

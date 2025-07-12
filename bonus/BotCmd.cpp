@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 20:17:24 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/07 13:54:13 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/11 14:03:04 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ void sendFrames(Bot* bot, std::vector<std::string> frames, int delay)
     }
 }
 
-// esta funcion lanza un whois real al servidor
 void botHackCommand(Bot* bot, const std::string& text)
 {
     if (text.length() <= 5) { // "!hack" tiene 5 caracteres
@@ -53,10 +52,13 @@ void botHackCommand(Bot* bot, const std::string& text)
         return;
     }
 
-    // aviso que voy a hacer el whois
     bot->safeSend("PRIVMSG " + bot->getChannel() + " :[BOT] Hack request for: " + nick + "\r\n");
-    // mando el comando real al servidor
-    bot->safeSend("WHOIS " + nick + "\r\n");
+    bot->safeSend("PRIVMSG " + bot->getChannel() + " :[BOT] INITIATING HACK SEQUENCE on target : " + nick + "\r\n");
+    bot->safeSend("PRIVMSG " + bot->getChannel() + " :[BOT] Connecting to satellite...\r\n" + nick + "\r\n");
+    bot->safeSend("PRIVMSG " + bot->getChannel() + " :[BOT] Bypassing firewall...\r\n" + nick + "\r\n");
+    bot->safeSend("PRIVMSG " + bot->getChannel() + " :[BOT] Downloading files...\r\n" + nick + "\r\n");
+    bot->safeSend("PRIVMSG " + bot->getChannel() + " :[BOT] HACK DONE! All info push it to DARK WEB of " + nick + "\r\n");
+
 }
 
 

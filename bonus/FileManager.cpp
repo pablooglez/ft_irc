@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 10:39:43 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/09 14:08:19 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/10 12:42:04 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,10 +26,11 @@
 FileManager::FileManager() {}
 
 FileManager::~FileManager() {
-	for (std::map<std::string, FileTransfer*>::iterator it = _activeTransfers.begin(); it != _activeTransfers.end(); ++it)
-	{
-		delete it->second;
-	}
+	for (std::map<std::string, FileTransfer*>::iterator it = _activeTransfers.begin(); 
+         it != _activeTransfers.end(); ++it) {
+        delete it->second;
+        it->second = NULL;
+    }
 	_activeTransfers.clear();
 }
 
@@ -89,7 +90,15 @@ void FileManager::sendFile(Server& server, Client& sender, const std::string& re
 		sender.sendMessage("ERROR :Missing receiver or filename");
 		return;
 	}
+	
+	std::ifstream file_test(filename.c_str(), std::ios::in | std::ios::binary);
+	if (!file_test.is_open()) {
+		sender.sendMessage("ERROR :File not found. Please check the filename.");
+		return;
+	}
+	file_test.close();
 
+	
 	if (isFileTooLarge(filename)) {
 		sender.sendMessage("ERROR :File is too large (max 5MB)");
 		return;
@@ -104,6 +113,11 @@ void FileManager::sendFile(Server& server, Client& sender, const std::string& re
 	Client* receiver = server.findClientByNickname(receiverNick);
 	if (!receiver) {
 		sender.sendMessage("ERROR :Receiver not found");
+		return;
+	}
+
+	if (receiver == &sender) {
+		sender.sendMessage("ERROR :Cannot send a file to yourself");
 		return;
 	}
 

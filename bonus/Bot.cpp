@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/03 20:59:11 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/07 12:18:33 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/12 13:25:38 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,8 @@ bool Bot::safeSend(const std::string& msg)
     while (total < (ssize_t)msg.size()) // mientras no hayamos enviado todo el mensaje...
     {
         ssize_t n = send(_fd, msg.c_str() + total, msg.size() - total, 0); // intentamos enviar la parte que falta.
-        if (n <= 0) return false; // si send() devuelve 0 o un valor negativo, es que ha fallado, asi q salimos con error.
+        if (n <= 0) 
+            return false; // si send() devuelve 0 o un valor negativo, es que ha fallado, asi q salimos con error.
         total += n; // sumamos los bytes enviados para seguir desde el siguiente.
     }
     return true; // cuando hemos enviado todo el mensaje, devolvemos true.
@@ -84,7 +85,7 @@ void Bot::start() {
     // Aquí voy a guardar:
     // - El tipo de red que voy a usar (IPv4 en este caso).
     // - La dir IP del servidor (por ejemplo: 127.0.0.1).
-    // - El puerto al que me quiero conectar (por ejemplo: 6667).
+    // - El puerto al que me quiero conecquetar (por ejemplo: 6667).
 
     serverAddr.sin_family = AF_INET; // tipo de red IPv4
     serverAddr.sin_port = htons(_port); // convierto el puerto al formato que usa la red (big-endian)
@@ -234,6 +235,9 @@ void Bot::processMessage(const std::string& line)
     // Esto procesa los mensajes PRIVMSG que lleguen al canal donde está el bot.
     // Solo nos interesan los mensajes enviados al canal, no los privados ni de otros sitios.
 
+
+    //CORREGIRIRC ESTO POSIBLE FALLO
+    
     if (line.find("PRIVMSG " + _channel) == std::string::npos)
         return;
     // Buscamos dentro de la línea si aparece "PRIVMSG #canal" ➜ es decir, si el mensaje va dirigido al canal donde está el bot.

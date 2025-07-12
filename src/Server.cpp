@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 17:05:24 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/09 13:59:34 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/11 14:17:52 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,10 +127,6 @@ bool	Server::setupSocket()
 
 void	Server::start()
 {
-
-	#ifdef BONUS
-		std::cout << "[BONUS] SENDFILE is enabled in Server.cpp" << std::endl;
-	#endif
 	if (!setupSocket())
 	{
 		std::cerr << "Error: Failed to setup server socket" << std::endl;
@@ -436,7 +432,7 @@ void	Server::parceIRCMessage(int client_fd, const std::string &message, char del
 		ModesCommand(client_fd, tokens);
 	#ifdef BONUS
 	else if (command == "SENDFILE")
-		_fileManager.sendFile(*this, *client, tokens[1], tokens[2]);
+		SendFileCommand(client_fd, tokens);
 	#endif
 
 
@@ -611,3 +607,65 @@ void Server::removeChannelIfEmpty(const std::string &channel_name)
 
 
 
+
+//SENDFILES
+#ifdef BONUS
+void Server::SendFileCommand(int client_fd, const std::vector<std::string> &tokens)
+{
+	if (tokens.size() < 3)
+	{
+		Client* client = findClientByFd(client_fd);
+		if (client)
+			client->sendMessage("ERROR :Usage: SENDFILE <receiver_nick> <filename>\r\n");
+		return;
+	}
+
+	std::string receiver_nick = tokens[1];
+	std::string filename = tokens[2];
+
+	Client* sender = findClientByFd(client_fd);
+	Client* receiver = findClientByNickname(receiver_nick);
+
+	if (!sender || !receiver)
+	{
+		if (sender)
+			sender->sendMessage("ERROR :Invalid sender or receiver\r\n");
+		return;
+	}
+
+	// Leer el archivo del disco
+	std::ifstream file(filename.c_str(), std::ios::binary);
+	if (!file)
+	{
+		sender->sendMessage("ERROR :File not found\r\n");
+		return;
+	}
+
+	// Leer todo el contenido
+	std::ostringstream buffer;
+	buffer << file.rdbuf();
+	std::string fileContent = buffer.str();
+	file.close();
+
+	// Codificar a base64
+	std::string base64 = Base64::encodeBase64(fileContent);
+
+	size_t chunkSize = 400; // tamaño por PRIVMSG
+	size_t totalChunks = (base64.size() + chunkSize - 1) / chunkSize;
+
+	// Enviar inicio
+	receiver->sendMessage("NOTICE :" + sender->getNickName() + " is sending you a file: " + filename + "\r\n");
+
+	// Enviar los chunks como PRIVMSG
+	for (size_t i = 0; i < totalChunks; ++i)
+	{
+		std::string chunk = base64.substr(i * chunkSize, chunkSize);
+		receiver->sendMessage("PRIVMSG " + receiver_nick + " :FILECHUNK " + filename + " " + chunk + "\r\n");
+		usleep(30000); // para evitar saturar
+	}
+
+	// Mensaje final
+	receiver->sendMessage("PRIVMSG " + receiver_nick + " :FILEEND " + filename + "\r\n");
+	sender->sendMessage("NOTICE :File sent successfully\r\n");
+}
+#endif

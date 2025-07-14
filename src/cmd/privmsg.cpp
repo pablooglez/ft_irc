@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   privmsg.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 18:09:47 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/07 20:40:07 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/14 19:43:10 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,38 @@ void	Server::PrivmsgCommand(int client_fd, const std::vector<std::string> &token
 			client->sendMessage(error);
 			return;
 		}
+
+		#ifdef BONUS
+		//send
+		// Check if it's a file transfer chunk
+		if (message.find("FILECHUNK") == 0)
+		{
+			std::istringstream iss(message);
+			std::string command, filename, chunk;
+
+			iss >> command >> filename;
+			std::getline(iss, chunk);
+			if (!chunk.empty() && chunk[0] == ' ')
+				chunk = chunk.substr(1);
+
+			target_client->handleFileChunk(filename, chunk);
+			std::cout << "[FILECHUNK] " << filename << " received for " << target_client->getNickName() << std::endl;
+			return;
+		}
+
+		// Check if it's end of transfer
+		if (message.find("FILEEND") == 0)
+		{
+			std::istringstream iss(message);
+			std::string command, filename;
+
+			iss >> command >> filename;
+			target_client->handleFileEnd(filename);
+			std::cout << "[FILEEND] Transfer finished: " << filename << " for " << target_client->getNickName() << std::endl;
+			return;
+		}
+		//
+		#endif
 
 		std::string privmsg = ":" + client->getNickName() + "!" + client->getUserName() + "@" + client->getHostName() + " PRIVMSG " + target + " :" + message + "\r\n";
 		target_client->sendMessage(privmsg);

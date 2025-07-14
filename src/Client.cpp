@@ -3,15 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 16:19:42 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/07 18:53:45 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/14 19:42:12 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/Client.hpp"
 #include "../include/Channel.hpp"
+#ifdef BONUS
+# include "../bonus/Base64.hpp"
+#endif
 
 Client::Client()
 {
@@ -198,6 +201,12 @@ bool	Client::sendMessage(const std::string &message) const
 	if (this->_fd == -1)
 		return false;
 
+	#ifdef BONUS
+		//hide intern system messages
+		if (message.find("FILECHUNK") != std::string::npos)
+			return true; // dont send nothing, means exit
+	#endif
+
 	std::string formatted_message = message;
 
 	if (formatted_message.substr(formatted_message.length() - 2) != "\r\n")
@@ -231,3 +240,45 @@ std::string Client::getPrefix() const
 {
 	return (":" + this->_nickname + "!" + this->_username + "@" + this->_hostname);
 }
+
+
+
+//sendfile
+
+#ifdef BONUS
+//save data base64 in raw concatenated
+void Client::handleFileChunk(const std::string& filename, const std::string& data)
+{
+    _receivedFiles[filename] += data;
+}
+
+// Decode the content base64 and saveit into hardisk
+void Client::handleFileEnd(const std::string& filename)
+{
+    std::map<std::string, std::string>::iterator it = _receivedFiles.find(filename);
+    if (it == _receivedFiles.end())
+    {
+        std::cerr << "[ERROR] No chunks received for file: " << filename << std::endl;
+        return;
+    }
+
+    const std::string& base64 = it->second;
+    std::string decoded = Base64::decodeBase64(base64);
+
+    std::ofstream file(filename.c_str(), std::ios::binary);
+    if (file)
+    {
+        file.write(decoded.c_str(), decoded.size());
+        file.close();
+        std::cout << "[RECEIVED] File saved: " << filename << std::endl;
+    }
+    else
+    {
+        std::cerr << "[ERROR] Failed to write file: " << filename << std::endl;
+		this->sendMessage("NOTICE " + this->getNickName() + " : File '" + filename + "' received and saved successfully.");
+    }
+
+    _receivedFiles.erase(it);
+}
+
+#endif

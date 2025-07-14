@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:37:38 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/09 20:44:28 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/14 19:45:58 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,13 @@ extern int	g_global;
 # include "Channel.hpp"
 # include "RPL.hpp"
 
+#ifdef BONUS
+# include "../bonus/FileManager.hpp"
+# include "../bonus/FileTransfer.hpp"
+# include "../bonus/Base64.hpp"
+# include "../bonus/FileRebuilder.hpp"
+#endif
+
 
 class Client;
 class Channel;
@@ -67,6 +74,11 @@ class Server
 			std::map<int, Client>		_clients;		// Map of Client objects (fd -> Client)
 
 			std::map<std::string, Channel> _channels;
+
+			#ifdef BONUS
+			FileManager					_fileManager;
+			FileRebuilder 				_fileRebuilder;
+			#endif
 
 	public:
 			Server(int port, const std::string &password);
@@ -141,4 +153,9 @@ class Server
 
 			// UTILS
 			std::vector<std::string> splitMessage(const std::string &message, char delimiter);
+
+			// SENDFILES
+			#ifdef BONUS
+			void 		SendFileCommand(int client_fd, const std::vector<std::string> &tokens);
+			#endif
 };

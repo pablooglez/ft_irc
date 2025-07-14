@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 13:23:19 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/07 21:07:11 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/14 20:05:59 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,11 @@
 #include <algorithm>
 #include <iostream>
 #include <sys/socket.h>
+#include <map>
+#include <iostream>
+#include <fstream>
+
+
 
 class Channel;
 
@@ -36,6 +41,10 @@ class Client
 			std::vector<Channel*>	_channels;			// Channels where the user is
 			std::string				_buffer;			// Buffer for incomplete messages
 
+			//sendfile
+			#ifdef BONUS
+			std::map<std::string, std::string> _receivedFiles;
+			#endif
 	public:
 			Client();
 			Client(int fd, const std::string &hostname);
@@ -80,4 +89,10 @@ class Client
 
 			// FORMATTING UTILITIES
 			std::string	getPrefix() const;
+
+			//send file
+			#ifdef BONUS
+			void handleFileChunk(const std::string& filename, const std::string& data);
+			void handleFileEnd(const std::string& filename);
+			#endif
 };

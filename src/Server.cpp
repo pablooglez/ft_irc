@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 17:05:24 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/14 19:38:58 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/14 21:21:28 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -614,18 +614,21 @@ void Server::SendFileCommand(int client_fd, const std::vector<std::string> &toke
 	size_t totalChunks = (base64.size() + chunkSize - 1) / chunkSize;
 
 	// Send info
-	receiver->sendMessage("NOTICE :" + sender->getNickName() + " is sending you a file: " + filename + "\r\n");
+	std::string fileNotify = ":" + sender->getNickName() + "!" + sender->getUserName() + "@" + sender->getHostName() + " PRIVMSG " + receiver_nick + " :" + sender->getNickName() + " is sending you a file: " + filename + "\r\n";
+	receiver->sendMessage(fileNotify);
 
 	// Send privmsg like chunk
 	for (size_t i = 0; i < totalChunks; ++i)
 	{
 		std::string chunk = base64.substr(i * chunkSize, chunkSize);
-		receiver->sendMessage("PRIVMSG " + receiver_nick + " :FILECHUNK " + filename + " " + chunk + "\r\n");
+		std::string chunkMsg = ":" + sender->getNickName() + "!" + sender->getUserName() + "@" + sender->getHostName() + " PRIVMSG " + receiver_nick + " :FILECHUNK " + filename + " " + chunk + "\r\n";
+		receiver->sendMessage(chunkMsg);
 		usleep(30000); // anti saturation
 	}
 
 	// Final send
-	receiver->sendMessage("PRIVMSG " + receiver_nick + " :FILEEND " + filename + "\r\n");
+	std::string endMsg = ":" + sender->getNickName() + "!" + sender->getUserName() + "@" + sender->getHostName() + " PRIVMSG " + receiver_nick + " :FILEEND " + filename + "\r\n";
+	receiver->sendMessage(endMsg);
 	sender->sendMessage("NOTICE :File sent successfully\r\n");
 }
 #endif

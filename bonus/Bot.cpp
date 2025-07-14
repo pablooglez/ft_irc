@@ -6,21 +6,12 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/03 20:59:11 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/10 19:22:41 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/14 17:58:54 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "include/BotCmd.hpp"
 #include "include/Bot.hpp"
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <cstring>
-#include <cstdlib>
-#include <fcntl.h>
-
-
 
 Bot::Bot(const std::string& ip, int port, const std::string& pass, const std::string& channel)
 {

@@ -6,26 +6,16 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 20:17:24 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/14 17:36:20 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/14 17:58:55 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "include/BotCmd.hpp"
-#include <unistd.h>
-#include <vector>
-
-static bool stopRequested = false;
 
 void sendFrames(Bot* bot, std::vector<std::string> frames, int delay)
 {
 	for (size_t i = 0; i < frames.size(); ++i)
 	{
-		if (stopRequested)
-		{
-			bot->safeSend("PRIVMSG " + bot->getChannel() + " :Story stopped.\r\n");
-			stopRequested = false;
-			return;
-		}
 		bot->safeSend("PRIVMSG " + bot->getChannel() + " :" + frames[i] + "\r\n");
 		sleep(delay);
 	}
@@ -64,6 +54,25 @@ void botHackCommand(Bot* bot, const std::string& text)
 		if (i < hackMessages.size() - 1)  // No hacer pausa después del último mensaje
 			sleep(1);
 	}
+}
+
+void botTimeCommand(Bot* bot)
+{
+	// Obtener el tiempo actual (compatible con C++98)
+	std::time_t rawTime = std::time(0);
+	std::tm* timeInfo = std::localtime(&rawTime);
+	
+	// Formatear la fecha y hora manualmente
+	char timeBuffer[100];
+	std::strftime(timeBuffer, sizeof(timeBuffer), "%Y-%m-%d %H:%M:%S", timeInfo);
+	std::string formattedTime(timeBuffer);
+	
+	// Obtener el día de la semana
+	const char* weekdays[] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+	std::string weekday = weekdays[timeInfo->tm_wday];
+	
+	// Enviar el mensaje con la información del tiempo
+	bot->safeSend("PRIVMSG " + bot->getChannel() + " :[BOT] 🕐 Current time: " + formattedTime + " (" + weekday + ")\r\n");
 }
 
 
@@ -109,10 +118,9 @@ void handleCommands(Bot* bot, const std::string& text)
 		return;
 	}
 
-	if (text == "!stop")
+	if (text == "!time")
 	{
-		stopRequested = true;
-		bot->safeSend("PRIVMSG " + bot->getChannel() + " :Stop request received.\r\n");
+		botTimeCommand(bot);
 		return;
 	}
 }

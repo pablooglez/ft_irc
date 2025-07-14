@@ -13,10 +13,13 @@
 #pragma once
 
 #include "Bot.hpp"
-#include <vector>
+#include <vector>	// std::vector
+#include <unistd.h>	// sleep
+#include <ctime>	// time, strftime
 
 void handleCommands(Bot* bot, const std::string& text);
 
 void sendFrames(Bot* bot, std::vector<std::string> frames, int delay);
 void botHackCommand(Bot* bot, const std::string& text);
+void botTimeCommand(Bot* bot);
 void story42(Bot* bot);

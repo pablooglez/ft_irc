@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 20:17:24 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/10 19:16:35 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/14 17:36:20 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,23 @@ void botHackCommand(Bot* bot, const std::string& text)
 		return;
 	}
 
-	bot->safeSend("PRIVMSG " + bot->getChannel() + " :[BOT] Hack request for: " + nick + "\r\n");
-	bot->safeSend("WHOIS " + nick + "\r\n");
+	// Crear la secuencia de mensajes del "hack"
+	std::vector<std::string> hackMessages;
+	hackMessages.push_back("[BOT] 🔍 Scanning target: " + nick);
+	hackMessages.push_back("[BOT] 🖥️  Accessing mainframe...");
+	hackMessages.push_back("[BOT] 🔐 Bypassing firewall...");
+	hackMessages.push_back("[BOT] 📡 Connecting to satellite...");
+	hackMessages.push_back("[BOT] 💾 Downloading data...");
+	hackMessages.push_back("[BOT] 🔓 Decrypting files...");
+	hackMessages.push_back("[BOT] ✅ Hack complete! " + nick + " has been 'hacked' (just kidding! 😄)");
+
+	// Enviar cada mensaje con una pausa entre ellos
+	for (size_t i = 0; i < hackMessages.size(); ++i)
+	{
+		bot->safeSend("PRIVMSG " + bot->getChannel() + " :" + hackMessages[i] + "\r\n");
+		if (i < hackMessages.size() - 1)  // No hacer pausa después del último mensaje
+			sleep(1);
+	}
 }
 
 

@@ -6,20 +6,23 @@
 #    By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/06 20:46:56 by albelope          #+#    #+#              #
-#    Updated: 2025/07/10 19:17:44 by pablogon         ###   ########.fr        #
+#    Updated: 2025/07/14 19:01:50 by pablogon         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = bonus
 
-SRC = Bot.cpp BotCmd.cpp main.cpp
+
+BONUS_SRC = Bot.cpp BotCmd.cpp main.cpp
+
+SRC = $(BONUS_SRC)
 
 OBJ = $(SRC:.cpp=.o)
 
 RM = rm -f
 
 CC = c++
-CPPFLAGS = -Wall -Wextra -Werror -std=c++98 
+CPPFLAGS = -Wall -Wextra -Werror -std=c++98 -I../include -I./include 
 
 
 BOLD	:= \033[1m

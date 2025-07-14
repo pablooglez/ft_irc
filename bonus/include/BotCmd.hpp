@@ -23,3 +23,4 @@ void sendFrames(Bot* bot, std::vector<std::string> frames, int delay);
 void botHackCommand(Bot* bot, const std::string& text);
 void botTimeCommand(Bot* bot);
 void story42(Bot* bot);
+void pabloAsciiArt(Bot* bot);

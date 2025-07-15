@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 13:23:19 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/07 21:07:11 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/15 19:52:38 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,10 @@
 #include <algorithm>
 #include <iostream>
 #include <sys/socket.h>
+#ifdef BONUS
+#include <map>
+#include <fstream>
+#endif
 
 class Channel;
 
@@ -35,6 +39,11 @@ class Client
 
 			std::vector<Channel*>	_channels;			// Channels where the user is
 			std::string				_buffer;			// Buffer for incomplete messages
+
+			// Sendfile
+			#ifdef BONUS
+			std::map<std::string, std::string> _receivedFiles;
+			#endif
 
 	public:
 			Client();
@@ -80,4 +89,10 @@ class Client
 
 			// FORMATTING UTILITIES
 			std::string	getPrefix() const;
+
+			// Send File
+			#ifdef BONUS
+			void	handleFileChunk(const std::string& filename, const std::string& data);
+			void	handleFileEnd(const std::string& filename);
+			#endif
 };

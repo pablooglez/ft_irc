@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 17:05:24 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/09 20:44:33 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/15 19:47:21 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,11 @@
 #include <algorithm>
 #include <cctype>
 #include "../include/RPL.hpp"
+#ifdef BONUS
+# include "../bonus/FileManager.hpp"
+# include "../bonus/FileTransfer.hpp"
+# include "../bonus/Base64.hpp"
+#endif
 
 Server::Server(int port, const std::string &password)
 {
@@ -420,6 +425,10 @@ void	Server::parceIRCMessage(int client_fd, const std::string &message, char del
 		NamesCommand(client_fd, tokens);
 	else if (command == "MODE")
 		ModesCommand(client_fd, tokens);
+	#ifdef BONUS
+	else if (command == "SENDFILE")
+		SendFileCommand(client_fd, tokens);
+	#endif
 }
 
 
@@ -554,3 +563,104 @@ void Server::removeChannelIfEmpty(const std::string &channel_name)
 		std::cout << "Empty channel removed: " << channel_name << std::endl;
 	}
 }
+
+// SENDFILES
+#ifdef BONUS
+void Server::SendFileCommand(int client_fd, const std::vector<std::string> &tokens)
+{
+	Client *client = findClientByFd(client_fd);		// Search Client
+	
+	if (!client)
+	{
+		std::cerr << "Error: Client not found for fd " << client_fd << std::endl;
+		return;
+	}
+
+	if (!client->isRegistered())	// Verify that the client is registered
+	{
+		std::string error = RPL::ERR_NOTREGISTERED(getServerName(), client->getNickName());
+		client->sendMessage(error);
+		return;
+	}
+
+	if (tokens.size() < 3)	// Check sufficient parameters
+	{
+		std::string error = RPL::ERR_NEEDMOREPARAMS(getServerName(), client->getNickName(), "SENDFILE");
+		client->sendMessage(error);
+		return;
+	}
+
+	std::string receiver_nick = tokens[1];
+	std::string filename = tokens[2];
+
+	// Validate filename (no path traversal, no empty)
+	if (filename.empty() || filename.find("..") != std::string::npos || filename.find("/") != std::string::npos)
+	{
+		std::string error = "NOTICE " + client->getNickName() + " :Invalid filename.";
+		client->sendMessage(error);
+		return;
+	}
+	
+	Client* sender = findClientByFd(client_fd);
+	Client* receiver = findClientByNickname(receiver_nick);
+
+	if (!receiver)
+	{
+		std::string error = RPL::ERR_NOSUCHNICK(getServerName(), client->getNickName(), receiver_nick);
+		client->sendMessage(error);
+		return;
+	}
+
+	// Prevent self-sending
+	if (receiver->getNickName() == client->getNickName())
+	{
+		std::string error = "NOTICE " + client->getNickName() + " :Cannot send file to yourself.";
+		client->sendMessage(error);
+		return;
+	}
+
+	// Read file from disk
+	std::ifstream file(filename.c_str(), std::ios::binary);
+	if (!file)
+	{
+		std::string error = ":" + getServerName() + " 404 " + client->getNickName() + " :File not found: " + filename + "\r\n";
+		client->sendMessage(error);
+		return;
+	}
+
+	// Read content
+	std::ostringstream buffer;
+	buffer << file.rdbuf();
+	std::string fileContent = buffer.str();
+	file.close();
+
+	// Encode to Base64
+	std::string base64 = Base64::encodeBase64(fileContent);
+
+	size_t chunkSize = 400; // Size for chunk
+	size_t totalChunks = (base64.size() + chunkSize - 1) / chunkSize;
+
+	// Send notification to receiver
+	std::string fileNotify = ":" + sender->getNickName() + "!" + sender->getUserName() + "@" + sender->getHostName() + " PRIVMSG " + receiver_nick + " :" + sender->getNickName() + " is sending you a file: " + filename + "\r\n";
+	receiver->sendMessage(fileNotify);
+
+	// Send file chunks as PRIVMSG
+	for (size_t i = 0; i < totalChunks; ++i)
+	{
+		std::string chunk = base64.substr(i * chunkSize, chunkSize);
+		std::string chunkMsg = ":" + sender->getNickName() + "!" + sender->getUserName() + "@" + sender->getHostName() + " PRIVMSG " + receiver_nick + " :FILECHUNK " + filename + " " + chunk + "\r\n";
+		receiver->sendMessage(chunkMsg);
+		usleep(30000); // Anti-saturation delay
+	}
+
+	// Send end marker
+	std::string endMsg = ":" + sender->getNickName() + "!" + sender->getUserName() + "@" + sender->getHostName() + " PRIVMSG " + receiver_nick + " :FILEEND " + filename + "\r\n";
+	receiver->sendMessage(endMsg);
+	
+	// Confirm to sender
+	std::string success = ":" + getServerName() + " NOTICE " + sender->getNickName() + " :File sent successfully to " + receiver_nick + "\r\n";
+	sender->sendMessage(success);
+
+	std::cout << "File transfer completed: " << filename << " from " << sender->getNickName() << " to " << receiver->getNickName() << std::endl;
+}
+#endif

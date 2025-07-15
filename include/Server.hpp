@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:37:38 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/09 20:44:28 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/15 19:40:34 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,9 @@ extern int	g_global;
 # include "Channel.hpp"
 # include "RPL.hpp"
 
+#ifdef BONUS
+# include "../bonus/Base64.hpp"
+#endif
 
 class Client;
 class Channel;
@@ -141,4 +144,9 @@ class Server
 
 			// UTILS
 			std::vector<std::string> splitMessage(const std::string &message, char delimiter);
+
+			// SENDFILES
+			#ifdef BONUS
+			void			SendFileCommand(int client_fd, const std::vector<std::string> &tokens);
+			#endif
 };

@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:37:42 by pablogon          #+#    #+#             */
-/*   Updated: 2025/06/10 13:39:14 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/15 20:13:43 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,11 +42,22 @@ int	main(int argc, char **argv)
 {
 	(void)argv;
 
+	#ifdef BONUS
+	if (argc != 3)
+	{
+		std::cerr << "Usage: ./ircserver_bonus <port> <password>" << std::endl;
+		return (1);
+	}
+	#else
+	{
 	if (argc != 3)
 	{
 		std::cerr << "Usage: ./ircserver <port> <password>" << std::endl;
 		return (1);
 	}
+	}
+	
+	#endif
 
 	if (valid_port(argv[1]) == 1)
 	{

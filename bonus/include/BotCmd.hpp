@@ -13,9 +13,9 @@
 #pragma once
 
 #include "Bot.hpp"
-#include <vector>	// std::vector
-#include <unistd.h>	// sleep
-#include <ctime>	// time, strftime
+#include <vector>
+#include <unistd.h>
+#include <ctime>
 
 void handleCommands(Bot* bot, const std::string& text);
 

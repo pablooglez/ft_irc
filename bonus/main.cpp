@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 21:01:20 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/14 19:02:46 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/15 20:33:05 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@ int	valid_ip(const std::string& ip)
 	struct sockaddr_in sa;
 	int result = inet_pton(AF_INET, ip.c_str(), &(sa.sin_addr));
 	if (result == 1)
-		return (0);	// Valid IP
-	return (1);		// Invalid IP
+		return (0);
+	return (1);
 }
 
 int	valid_password(std::string password)

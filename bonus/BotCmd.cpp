@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 20:17:24 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/14 20:13:47 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/15 20:25:32 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ void botHackCommand(Bot* bot, const std::string& text)
 		return;
 	}
 
-	// Crear la secuencia de mensajes del "hack"
 	std::vector<std::string> hackMessages;
 	hackMessages.push_back("[BOT] 🔍 Scanning target: " + nick);
 	hackMessages.push_back("[BOT] 🖥️  Accessing mainframe...");
@@ -47,31 +46,26 @@ void botHackCommand(Bot* bot, const std::string& text)
 	hackMessages.push_back("[BOT] 🔓 Decrypting files...");
 	hackMessages.push_back("[BOT] ✅ Hack complete! " + nick + " has been 'hacked' (just kidding! 😄)");
 
-	// Enviar cada mensaje con una pausa entre ellos
 	for (size_t i = 0; i < hackMessages.size(); ++i)
 	{
 		bot->safeSend("PRIVMSG " + bot->getChannel() + " :" + hackMessages[i] + "\r\n");
-		if (i < hackMessages.size() - 1)  // No hacer pausa después del último mensaje
+		if (i < hackMessages.size() - 1)
 			sleep(1);
 	}
 }
 
 void botTimeCommand(Bot* bot)
 {
-	// Obtener el tiempo actual (compatible con C++98)
 	std::time_t rawTime = std::time(0);
 	std::tm* timeInfo = std::localtime(&rawTime);
-	
-	// Formatear la fecha y hora manualmente
+
 	char timeBuffer[100];
 	std::strftime(timeBuffer, sizeof(timeBuffer), "%Y-%m-%d %H:%M:%S", timeInfo);
 	std::string formattedTime(timeBuffer);
-	
-	// Obtener el día de la semana
+
 	const char* weekdays[] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 	std::string weekday = weekdays[timeInfo->tm_wday];
-	
-	// Enviar el mensaje con la información del tiempo
+
 	bot->safeSend("PRIVMSG " + bot->getChannel() + " :[BOT] 🕐 Current time: " + formattedTime + " (" + weekday + ")\r\n");
 }
 

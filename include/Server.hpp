@@ -6,37 +6,32 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:37:38 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/15 19:40:34 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/15 20:36:06 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include <iostream> // std::cout, std::cerr
-#include <cstring> // std::string
-#include <cstdlib> // exit, atoi
-#include <vector> // std::vector
-#include <map> // std::map
-#include <algorithm> // std::find, std::remove
-#include <sstream> // std::stringstream
+#include <iostream> 
+#include <cstring> 
+#include <cstdlib> 
+#include <vector> 
+#include <map> 
+#include <algorithm> 
+#include <sstream> 
 
-// Sockets and Network
-#include <sys/socket.h> // socket, blind, listen, accept, send, recv, setsockopt, getsockname
-#include <netinet/in.h> // struct sockaddr_in, INADDR_ANY, htons, htonl, ntohs, ntohl
-#include <arpa/inet.h> // inet_ntop, inet_pton
+#include <sys/socket.h> 
+#include <netinet/in.h> 
+#include <arpa/inet.h> 
 
-// I/O
-#include <poll.h> // poll()
+#include <poll.h> 
 
-// File Control
-#include <fcntl.h> // fcntl()
-#include <unistd.h> // close(), lseek()
+#include <fcntl.h> 
+#include <unistd.h>
 
-// Signals
 #include <csignal>
 
-// Time
-#include <ctime> // time_t, time()
+#include <ctime>
 
 extern int	g_global;
 
@@ -63,11 +58,11 @@ class Server
 			bool						_running;
 			sockaddr_in					_server_addr;
 	
-			std::vector<struct pollfd>	_poll_fds;		// Arrays of fds for poll()
-			std::vector<int>			_client_fds;	// List of clients FDs (for mapping)
+			std::vector<struct pollfd>	_poll_fds;
+			std::vector<int>			_client_fds;
 
-			std::map<int, std::string> _client_buffers;	// Buffer for Client
-			std::map<int, Client>		_clients;		// Map of Client objects (fd -> Client)
+			std::map<int, std::string> _client_buffers;
+			std::map<int, Client>		_clients;
 
 			std::map<std::string, Channel> _channels;
 
@@ -78,20 +73,19 @@ class Server
 			
 			int						GetPort() const;
 			const std::string		&GetPassword() const;
-			const std::string&		getServerName() const;		// Get server name for RPL messages
+			const std::string&		getServerName() const;
 			int						getServerFd() const;
-			std::string				getClientNick(int client_fd) const;	// Get client nickname or "*" if none
+			std::string				getClientNick(int client_fd) const;
 
 
-			bool	setupSocket();	// Configure Socket
-			void	start();		// Init Server
-			void	stop();			// Stop Server
-			void	cleanup();		// Clean resources
+			bool	setupSocket();
+			void	start();
+			void	stop();
+			void	cleanup();
 
 
-			static void	handleSignal(int signal); // Signals
+			static void	handleSignal(int signal);
 
-			// Server main loop
 			void	runServerLoop();
 			void	handleNewConnection();
 			void	handleClientData(int client_fd);

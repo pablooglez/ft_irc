@@ -6,15 +6,13 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 16:23:01 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/09 20:10:02 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/15 20:38:02 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/Channel.hpp"
 #include "../include/Client.hpp"
 #include <sstream>
-
-// === CONSTRUCTORS ===
 
 Channel::Channel()
 	: _name(""), _topic(""), _key(""), _inviteOnly(false),
@@ -63,13 +61,7 @@ Channel &Channel::operator=(const Channel &other)
 
 Channel::~Channel()
 {
-	
 }
-
- 	// ===========================================
-	// ======		MEMBER MANAGEMET 	==========
-	// ===========================================
-
 
 bool	Channel::isMember(Client* member) const
 {
@@ -77,13 +69,6 @@ bool	Channel::isMember(Client* member) const
 		return false;
 	return hasClient(member->getNickName());
 }
-
-/*	isMember(Client* member):
-		→ Solo responde si el cliente ya está en el canal (_members).
-		→ No hace ningún cambio.
-		→ Se usa para saber si tiene sentido realizar ciertas acciones:
-		   - evitar duplicados al hacer JOIN
-		   - comprobar si alguien está dentro antes de hacer KICK, etc. */
 
 bool	Channel::addMember(Client* member)
 {
@@ -137,8 +122,6 @@ bool	Channel::inviteUser(Client* inviter, Client* target)
 	return true;
 }
 
-// === OPERATOR MANAGEMENT ===
-
 bool	Channel::addOperator(Client* client)
 {
 	if (client == NULL)
@@ -180,8 +163,6 @@ bool	Channel::isOperator(const std::string& nickname) const
 	return false;
 }
 
-// === INVITATION MANAGEMENT ===
-
 bool	Channel::addInvited(Client* client)
 {
 	if (client == NULL)
@@ -213,10 +194,6 @@ void	Channel::clearInvited()
 {
 	_invited.clear();
 }
-
-// ===============================================
-// ========= CHANNEL QUERIES AND VALIDATION ======
-// ===============================================
 
 const	std::vector<Client*> &Channel::whoIsIn() const
 {
@@ -271,8 +248,6 @@ int		Channel::getOperatorCount() const
 	return _operators.size();
 }
 
-// === CLIENT SEARCH METHODS ===
-
 Client* Channel::getClientbyNickname(const std::string& nickname) const
 {
 	for (size_t i = 0; i < _members.size(); i++)
@@ -292,32 +267,6 @@ bool	Channel::hasClient(const std::string& nickname) const
 	}
 	return false;
 }
-/*
- * getClientbyNickname() vs hasClient()
- * Ambas recorren _members buscando un nickname, pero no hacen lo mismo:
- * ------------------------hasClient(nickname)--------------------------
- *     → Devuelve true/false. Solo comprueba si alguien está en el canal.
- *     → Útil para validaciones rápidas:
- *         · NAMES → ¿Está este usuario?
- *         · PRIVMSG → ¿Puede escribir aquí?
- *         · Logs/debug → ¿Quién está conectado
- * ---------------------- getClientbyNickname(nickname)-------------------
- *     → Devuelve un Client* o NULL. Te da el objeto si está.
- *     → Útil cuando necesitas usar ese cliente:
- *         · KICK → para echarlo
- *         · MODE → para cambiarle permisos
- *         · PRIVMSG directo → para enviarle datos
- * -----------Analogía-------------------------------------------------
- *   hasClient()          → "¿Está Juan en casa?"
- *   getClientbyNickname()→ "Pásame a Juan, quiero hablar con él"
- */
-
-
-
-	// ===============================================
-	// ========== PERMISSION VALIDATION ==============
-	// ===============================================
-	
 
 bool	Channel::canKick(Client* kicker, Client* target) const
 {
@@ -344,8 +293,6 @@ bool	Channel::canSetTopic(Client* client) const
 	return true;
 }
 
-// === COMMUNICATION METHODS ===
-
 void	Channel::broadcast(const std::string& message, Client* sender) const
 {
 	(void)sender;
@@ -368,9 +315,6 @@ void	Channel::broadcastToOthers(const std::string& message, Client* sender) cons
 		_members[i]->sendMessage(message);
 	}
 }
-
-// === IRC PROTOCOL RESPONSES ===
-
 
 std::string		Channel::getNamesReply() const
 {
@@ -426,10 +370,6 @@ std::string		Channel::getUserListString() const
 	return showNicknames;
 }
 
-	// ===============================================
-	// ========== STATIC VALIDATION METHODS ==========
-	// ===============================================
-	
 bool		Channel::isValidChannelName(const std::string& name)
 {
 	if (name.empty())
@@ -453,11 +393,6 @@ bool		Channel::isValidChannelName(const std::string& name)
 	}
 	return true;
 }
-
-
-	// ===============================================
-	// ========== GETTERS (READ-ONLY ACCESS) =========
-	// ===============================================
 
 const std::string& Channel::getChannelName() const
 {
@@ -506,26 +441,11 @@ bool	Channel::hasUserLimit() const
 	return _hasUserLimit;
 }
 
-	// ===============================================
-	// ======= SETTERS (MODIFY CHANNEL STATE) ========
-	// ===============================================
-
 void	Channel::setPassword(const std::string &password)
 {
 	_key = password;
-	//actualizamos el flag
 	_hasPassword = !password.empty();
 }
-/*
-Cambiar contraseña del canal (modo +k):
-- Si metes una string (ej: "clave123") ⇒ activa el modo +k y guarda la clave.
-- Si metes "" ⇒ desactiva el modo +k y borra la _key.
-¿Por que y para que !password.empty()?
-- Si la string no esta vacía -> hay contraseña → _hasPassword = true
-- Si está vacía → no hay contraseña → _hasPassword = false
- _key y _hasPassword siempre estány deben estar sincronizados.
-Solo los Op pueden hacer esto.
-*/
 
 void	Channel::setTopic(const std::string &topicName)
 {
@@ -542,14 +462,6 @@ void	Channel::setInviteOnly(bool invite)
 {
 	_inviteOnly = invite;
 }
-/*
-setInviteOnly(bool invite):
-Esto activa o desactiva el modo +i del canal. 
-Si pones true, solo pueden entrar los que estén invitados. Si pones false, entra quien quiera.
-Lo típico de MODE +i o -i llama a esto. Solo los ops pueden usarlo. 
-_inviteOnly es el bool que dice si el canal está cerrado, y _invited es la lista de los que tienen pase para entrar.
-Ejo: pones setInviteOnly(true), luego haces inviteUser("alice") y ella entra, pero bob no porque no está invitado.
-*/
 
 void	Channel::setTopicRestricted(bool restricted)
 {
@@ -581,4 +493,3 @@ bool Channel::removeClient(Client *client)
 	
 	return false;
 }
-

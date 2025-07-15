@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 13:23:19 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/15 19:52:38 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/15 20:34:44 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,20 +27,19 @@ class Channel;
 class Client
 {
 	private:
-			int						_fd;				// FD Socket
-			std::string				_nickname;			// Nick User
-			std::string				_username;			// Name User
-			std::string				_hostname;			// Address IP/Hostname
+			int						_fd;
+			std::string				_nickname;
+			std::string				_username;
+			std::string				_hostname;
 
-			bool					_is_authenticated;	// PASS Successfully
-			bool					_has_nickname;		// Have NICK
-			bool					_has_userinfo;		//Have USER
-			bool					_is_registered;		// Succesfully Registered (PASS + NICK + USER)
+			bool					_is_authenticated;
+			bool					_has_nickname;
+			bool					_has_userinfo;
+			bool					_is_registered;
 
-			std::vector<Channel*>	_channels;			// Channels where the user is
-			std::string				_buffer;			// Buffer for incomplete messages
+			std::vector<Channel*>	_channels;
+			std::string				_buffer;
 
-			// Sendfile
 			#ifdef BONUS
 			std::map<std::string, std::string> _receivedFiles;
 			#endif

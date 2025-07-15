@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 16:19:42 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/15 19:44:36 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/15 20:39:03 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -243,13 +243,12 @@ std::string Client::getPrefix() const
 //sendfile
 
 #ifdef BONUS
-//save data base64 in raw concatenated
+
 void Client::handleFileChunk(const std::string& filename, const std::string& data)
 {
 	_receivedFiles[filename] += data;
 }
 
-// Decode the content base64 and saveit into hardisk
 void Client::handleFileEnd(const std::string& filename)
 {
 	std::map<std::string, std::string>::iterator it = _receivedFiles.find(filename);

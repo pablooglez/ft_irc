@@ -6,13 +6,13 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:37:42 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/15 20:13:43 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/15 20:39:11 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/Server.hpp"
 
-int	g_global = 0; // Global variable
+int	g_global = 0;
 
 int	valid_password(std::string password)
 {

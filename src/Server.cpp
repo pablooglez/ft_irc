@@ -6,7 +6,7 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 17:05:24 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/15 19:47:21 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/15 20:42:12 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ std::string Server::getClientNick(int client_fd) const
 	std::map<int, Client>::const_iterator it = _clients.find(client_fd);
 	if (it != _clients.end() && !it->second.getNickName().empty())
 		return it->second.getNickName();
-	return "*";	// Client without nicknname
+	return "*";
 }
 
 bool	Server::setupSocket()
@@ -206,12 +206,11 @@ void	Server::runServerLoop()
 			}
 			if (this->_poll_fds[i].revents & (POLLHUP | POLLERR))
 			{
-				// Handle client disconnection
 				if (this->_poll_fds[i].fd != this->_server_fd)
 				{
 					std::cout << "Error: Client disconnected (error/hangup)" << std::endl;
 					removeClient(this->_poll_fds[i].fd);
-					i--;	// Adjust index because we removed an element
+					i--;
 				}
 			}
 		}
@@ -223,10 +222,9 @@ void	Server::handleNewConnection()
 {
 	std::cout << "...Handling new connection..." << std::endl;
 
-	struct sockaddr_in client_addr;	// Structure for handling customer information
+	struct sockaddr_in client_addr;
 	socklen_t client_len = sizeof(client_addr);
 
-	//Accept() accept pending connection
 	int	client_fd = accept(this->_server_fd, (struct sockaddr*) &client_addr, &client_len);
 	
 	if (client_fd == -1)
@@ -235,7 +233,7 @@ void	Server::handleNewConnection()
 		return;
 	}
 
-	if (fcntl(client_fd, F_SETFL, O_NONBLOCK) == -1)	// Socket Not-blocking
+	if (fcntl(client_fd, F_SETFL, O_NONBLOCK) == -1)
 	{
 		std::cerr << "Error: fcntl() failed for client socket" << std::endl;
 		close(client_fd);
@@ -283,11 +281,11 @@ void	Server::handleClientData(int client_fd)
 		return;
 	}
 
-	buffer[bytes_received] = '\0';	// Finish buffer of null
+	buffer[bytes_received] = '\0';
 
-	_client_buffers[client_fd] += std::string(buffer, bytes_received);	// Add the new data to the client buffer
+	_client_buffers[client_fd] += std::string(buffer, bytes_received);
 	
-	processClientMessages(client_fd); // Process Complet messages
+	processClientMessages(client_fd);
 }
 
 void	Server::removeClient(int client_fd)
@@ -314,11 +312,9 @@ void	Server::removeClient(int client_fd)
 		}
 	}
 
-	// Remove client buffer
 	_client_buffers.erase(client_fd);
 	std::cout << "Client buffer removed" << std::endl;
 
-	// Remove client object
 	_clients.erase(client_fd);
 	std::cout << "Client object removed" << std::endl;
 
@@ -332,7 +328,7 @@ void	Server::removeClient(int client_fd)
 
 int	Server::findClientIndex(int client_fd)
 {
-	for (size_t i = 0; i < this->_client_fds.size(); i++) // Search in _client_fds
+	for (size_t i = 0; i < this->_client_fds.size(); i++)
 	{
 		if (this->_client_fds[i] == client_fd)
 			return static_cast<int>(i);
@@ -345,24 +341,23 @@ void	Server::processClientMessages(int client_fd)
 	std::string &buffer = _client_buffers[client_fd];
 	size_t pos = 0;
 
-	// Search messages ending in \r\n or \n
 	while ((pos = buffer.find("\r\n")) != std::string::npos || (pos = buffer.find("\n")) != std::string::npos)
 	{
 		std::string message = buffer.substr(0, pos);
 
-		if (buffer.substr(pos, 2) == "\r\n")	// Determine it is \r\n or \n to know how many characters to delete.
+		if (buffer.substr(pos, 2) == "\r\n")
 		{
-			buffer.erase(0, pos + 2);			// Eliminate message + \r\n
+			buffer.erase(0, pos + 2);
 		}
 		else
 		{
-			buffer.erase(0, pos + 1);			// Eliminate message + \n
+			buffer.erase(0, pos + 1);
 		}
 
 		if (!message.empty())
 		{
 			std::cout << "Message received from FD" << client_fd << ": " << message << std::endl;
-			parceIRCMessage(client_fd, message, ' '); // Usar espacio como delimitador para comandos IRC
+			parceIRCMessage(client_fd, message, ' ');
 		}
 	}
 }
@@ -387,7 +382,6 @@ void	Server::parceIRCMessage(int client_fd, const std::string &message, char del
 		return;
 	}
 
-	// Commands allowed during registration process
 	if (command == "PASS")
 		PassCommand(client_fd, tokens);
 	else if (command == "NICK")
@@ -396,11 +390,8 @@ void	Server::parceIRCMessage(int client_fd, const std::string &message, char del
 		UserCommand(client_fd, tokens);
 	else if (command == "QUIT")
 		QuitCommand(client_fd, tokens);
-	
-	// Commands that require full registration
 	else if (!client->isRegistered())
 	{
-		// Send standard IRC error code without custom messages
 		std::string error = ":localhost 451 * :You have not registered\r\n";
 		client->sendMessage(error);
 		return;
@@ -466,15 +457,15 @@ bool Server::isNicknameInUse(const std::string &nickname)
 
 bool Server::isValidNickname(const std::string &nickname)
 {
-	if (nickname.empty() || nickname.length() > 9)	// Check if nickname is empty or too long (RFC 2812: max 9 characters)
+	if (nickname.empty() || nickname.length() > 9)
 	return false;
 
-	char first = nickname[0];	// First character must be a letter or special character (not a digit)
+	char first = nickname[0];
 	
 	if (!std::isalpha(first) && first != '_' && first != '[' && first != ']' && first != '\\' && first != '`' && first != '^' && first != '{' && first != '}')
 	return false;
 	
-	for (size_t i = 0; i < nickname.length(); ++i)	// Check all characters are valid
+	for (size_t i = 0; i < nickname.length(); ++i)
 	{
 		char c = nickname[i];
 		if (!std::isalnum(c) && c != '_' && c != '-' && c != '[' && c != ']' && c != '\\' && c != '`' && c != '^' && c != '{' && c != '}')
@@ -532,8 +523,7 @@ Channel* Server::findOrCreateChannel(const std::string &channel_name)
 	{
 		return &(it->second);
 	}
-	
-	// Create new channel
+
 	Channel new_channel(channel_name);
 	_channels[channel_name] = new_channel;
 	std::cout << "New channel created: " << channel_name << std::endl;
@@ -568,7 +558,7 @@ void Server::removeChannelIfEmpty(const std::string &channel_name)
 #ifdef BONUS
 void Server::SendFileCommand(int client_fd, const std::vector<std::string> &tokens)
 {
-	Client *client = findClientByFd(client_fd);		// Search Client
+	Client *client = findClientByFd(client_fd);
 	
 	if (!client)
 	{
@@ -576,14 +566,14 @@ void Server::SendFileCommand(int client_fd, const std::vector<std::string> &toke
 		return;
 	}
 
-	if (!client->isRegistered())	// Verify that the client is registered
+	if (!client->isRegistered())
 	{
 		std::string error = RPL::ERR_NOTREGISTERED(getServerName(), client->getNickName());
 		client->sendMessage(error);
 		return;
 	}
 
-	if (tokens.size() < 3)	// Check sufficient parameters
+	if (tokens.size() < 3)
 	{
 		std::string error = RPL::ERR_NEEDMOREPARAMS(getServerName(), client->getNickName(), "SENDFILE");
 		client->sendMessage(error);
@@ -593,7 +583,6 @@ void Server::SendFileCommand(int client_fd, const std::vector<std::string> &toke
 	std::string receiver_nick = tokens[1];
 	std::string filename = tokens[2];
 
-	// Validate filename (no path traversal, no empty)
 	if (filename.empty() || filename.find("..") != std::string::npos || filename.find("/") != std::string::npos)
 	{
 		std::string error = "NOTICE " + client->getNickName() + " :Invalid filename.";
@@ -611,7 +600,6 @@ void Server::SendFileCommand(int client_fd, const std::vector<std::string> &toke
 		return;
 	}
 
-	// Prevent self-sending
 	if (receiver->getNickName() == client->getNickName())
 	{
 		std::string error = "NOTICE " + client->getNickName() + " :Cannot send file to yourself.";
@@ -619,7 +607,6 @@ void Server::SendFileCommand(int client_fd, const std::vector<std::string> &toke
 		return;
 	}
 
-	// Read file from disk
 	std::ifstream file(filename.c_str(), std::ios::binary);
 	if (!file)
 	{
@@ -628,36 +615,30 @@ void Server::SendFileCommand(int client_fd, const std::vector<std::string> &toke
 		return;
 	}
 
-	// Read content
 	std::ostringstream buffer;
 	buffer << file.rdbuf();
 	std::string fileContent = buffer.str();
 	file.close();
 
-	// Encode to Base64
 	std::string base64 = Base64::encodeBase64(fileContent);
 
-	size_t chunkSize = 400; // Size for chunk
+	size_t chunkSize = 400;
 	size_t totalChunks = (base64.size() + chunkSize - 1) / chunkSize;
 
-	// Send notification to receiver
 	std::string fileNotify = ":" + sender->getNickName() + "!" + sender->getUserName() + "@" + sender->getHostName() + " PRIVMSG " + receiver_nick + " :" + sender->getNickName() + " is sending you a file: " + filename + "\r\n";
 	receiver->sendMessage(fileNotify);
 
-	// Send file chunks as PRIVMSG
 	for (size_t i = 0; i < totalChunks; ++i)
 	{
 		std::string chunk = base64.substr(i * chunkSize, chunkSize);
 		std::string chunkMsg = ":" + sender->getNickName() + "!" + sender->getUserName() + "@" + sender->getHostName() + " PRIVMSG " + receiver_nick + " :FILECHUNK " + filename + " " + chunk + "\r\n";
 		receiver->sendMessage(chunkMsg);
-		usleep(30000); // Anti-saturation delay
+		usleep(30000);
 	}
 
-	// Send end marker
 	std::string endMsg = ":" + sender->getNickName() + "!" + sender->getUserName() + "@" + sender->getHostName() + " PRIVMSG " + receiver_nick + " :FILEEND " + filename + "\r\n";
 	receiver->sendMessage(endMsg);
-	
-	// Confirm to sender
+
 	std::string success = ":" + getServerName() + " NOTICE " + sender->getNickName() + " :File sent successfully to " + receiver_nick + "\r\n";
 	sender->sendMessage(success);
 

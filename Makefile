@@ -6,7 +6,7 @@
 #    By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/05/29 18:35:50 by pablogon          #+#    #+#              #
-#    Updated: 2025/07/15 20:08:09 by pablogon         ###   ########.fr        #
+#    Updated: 2025/07/15 20:42:55 by pablogon         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,6 @@ NAME = ircserv
 BONUS_IRC = ircserv_bonus
 BONUS_BOT = bot
 
-# ================ 	Directories  ================= #
 SRC_DIR = src
 BONUS_DIR = bonus
 INCLUDE_DIR = include

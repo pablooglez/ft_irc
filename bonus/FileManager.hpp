@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   FileManager.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 10:39:31 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/08 13:52:31 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/15 20:28:42 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,8 @@
 
 class Server;
 
-class FileManager {
+class FileManager
+{
 	private:
 		std::map<std::string, FileTransfer*> _activeTransfers;
 

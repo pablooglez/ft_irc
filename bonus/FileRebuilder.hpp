@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   FileRebuilder.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 12:28:17 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/08 13:51:03 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/15 20:31:10 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,24 +24,26 @@
 
 class Server;
 
-class FileRebuilder {
-private:
-    struct FileBuffer {
-        std::vector<std::string> chunks;
-        std::string filename;
-    };
+class FileRebuilder
+{
+	private:
+		struct FileBuffer
+		{
+			std::vector<std::string> chunks;
+			std::string filename;
+		};
 
-    std::map<std::string, FileBuffer> _bufferMap; // Key: client_nick + filename
+	std::map<std::string, FileBuffer> _bufferMap;
 
-    std::string buildKey(const std::string& nick, const std::string& filename) const;
-    void writeFile(const std::string& filename, const std::string& content);
+	std::string buildKey(const std::string& nick, const std::string& filename) const;
+	void writeFile(const std::string& filename, const std::string& content);
 
-public:
-    FileRebuilder();
-    ~FileRebuilder();
+	public:
+		FileRebuilder();
+		~FileRebuilder();
 
-    void handleChunk(Client* client, const std::string& command, const std::string& filename, const std::string& data);
-    void handleEnd(Client* client, const std::string& filename);
+		void handleChunk(Client* client, const std::string& command, const std::string& filename, const std::string& data);
+		void handleEnd(Client* client, const std::string& filename);
 };
 
 #endif

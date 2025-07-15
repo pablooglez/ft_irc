@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   FileTransfer.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 11:05:40 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/07 13:59:18 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/15 20:32:48 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@
 #include <fstream>
 #include <ctime>
 
-class FileTransfer {
+class FileTransfer
+{
 		private:
 			std::string		_filename;
 			std::string		_senderNick;
@@ -47,4 +48,3 @@ class FileTransfer {
 };
 
 #endif
-

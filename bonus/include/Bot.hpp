@@ -6,22 +6,22 @@
 /*   By: pablogon <pablogon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 12:19:43 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/14 18:00:35 by pablogon         ###   ########.fr       */
+/*   Updated: 2025/07/15 20:18:51 by pablogon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include <iostream>	// std::string, std::cout, std::cerr
-#include <map>	// std::map
-#include <vector>	// std::vector
-#include <string>	// std::string
-#include <sys/socket.h>	// socket, send, recv
-#include <netinet/in.h>	// sockaddr_in, htons
-#include <arpa/inet.h>	//inet_pton
-#include <unistd.h>	// close, sleep
-#include <cstring>	// memset
-#include <cstdlib>	// exit, atoi
+#include <iostream>
+#include <map>
+#include <vector>
+#include <string>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <cstring>
+#include <cstdlib>
 
 class Bot
 {

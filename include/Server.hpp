@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:37:38 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/14 19:45:58 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/15 18:26:37 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,10 +45,11 @@ extern int	g_global;
 # include "RPL.hpp"
 
 #ifdef BONUS
-# include "../bonus/FileManager.hpp"
-# include "../bonus/FileTransfer.hpp"
 # include "../bonus/Base64.hpp"
-# include "../bonus/FileRebuilder.hpp"
+// Alternative file transfer architecture (unused):
+// # include "../bonus/FileManager.hpp"
+// # include "../bonus/FileTransfer.hpp"  
+// # include "../bonus/FileRebuilder.hpp"
 #endif
 
 
@@ -72,13 +73,14 @@ class Server
 
 			std::map<int, std::string> _client_buffers;	// Buffer for Client
 			std::map<int, Client>		_clients;		// Map of Client objects (fd -> Client)
+		std::map<std::string, Channel> _channels;
 
-			std::map<std::string, Channel> _channels;
-
-			#ifdef BONUS
-			FileManager					_fileManager;
-			FileRebuilder 				_fileRebuilder;
-			#endif
+		// BONUS: File transfer functionality implemented directly in SendFileCommand()
+		// Alternative architecture available in bonus/ files (FileManager, FileRebuilder)
+		#ifdef BONUS
+		// FileManager					_fileManager;		// Unused - direct implementation preferred
+		// FileRebuilder 				_fileRebuilder;		// Unused - direct implementation preferred
+		#endif
 
 	public:
 			Server(int port, const std::string &password);

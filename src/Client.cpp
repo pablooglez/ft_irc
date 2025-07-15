@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 16:19:42 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/14 19:42:12 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/15 19:14:13 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -271,11 +271,12 @@ void Client::handleFileEnd(const std::string& filename)
         file.write(decoded.c_str(), decoded.size());
         file.close();
         std::cout << "[RECEIVED] File saved: " << filename << std::endl;
+        this->sendMessage("NOTICE " + this->getNickName() + " :File '" + filename + "' received and saved successfully.");
     }
     else
     {
         std::cerr << "[ERROR] Failed to write file: " << filename << std::endl;
-		this->sendMessage("NOTICE " + this->getNickName() + " : File '" + filename + "' received and saved successfully.");
+        this->sendMessage("NOTICE " + this->getNickName() + " :Failed to save file '" + filename + "'.");
     }
 
     _receivedFiles.erase(it);

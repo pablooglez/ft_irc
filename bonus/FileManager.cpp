@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 10:39:43 by albelope          #+#    #+#             */
-/*   Updated: 2025/07/14 21:33:59 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/15 19:02:10 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,11 +138,11 @@ void FileManager::sendFile(Server& server, Client& sender, const std::string& re
 	}
 
 
-	std::string endMsg = ":" + sender.getNickName() + "!" + sender.getUserName() + "@" + sender.getHostName() + " PRIVMSG " + receiverNick + " :FILEEND " + filename + "\r\n";
+	std::string endMsg = ":" + sender.getNickName() + "!" + sender.getUserName() + "@" + sender.getHostName() + " PRIVMSG " + receiverNick + " :FILe received " + filename + "\r\n";
 	receiver->sendMessage(endMsg);
 	
 	std::string fileReceived = ":" + sender.getNickName() + "!" + sender.getUserName() + "@" + sender.getHostName() + " PRIVMSG " + receiverNick + " :File received successfully: " + filename + "\r\n";
 	receiver->sendMessage(fileReceived);
 	
-	sender.sendMessage("NOTICE :File sent successfully to " + receiverNick);
+	sender.sendMessage("INFO :File sent successfully to " + receiverNick);
 }

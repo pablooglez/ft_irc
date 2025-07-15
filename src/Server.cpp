@@ -6,7 +6,7 @@
 /*   By: albelope <albelope@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 17:05:24 by pablogon          #+#    #+#             */
-/*   Updated: 2025/07/14 21:25:40 by albelope         ###   ########.fr       */
+/*   Updated: 2025/07/15 19:08:34 by albelope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -597,6 +597,14 @@ void Server::SendFileCommand(int client_fd, const std::vector<std::string> &toke
 	std::string receiver_nick = tokens[1];
 	std::string filename = tokens[2];
 
+	// Validate filename (no path traversal, no empty)
+	if (filename.empty() || filename.find("..") != std::string::npos || filename.find("/") != std::string::npos)
+	{
+    	std::string error = "NOTICE " + client->getNickName() + " :Invalid filename.";
+    	client->sendMessage(error);
+    	return;
+	}
+	
 	Client* sender = findClientByFd(client_fd);
 	Client* receiver = findClientByNickname(receiver_nick);
 
@@ -605,6 +613,14 @@ void Server::SendFileCommand(int client_fd, const std::vector<std::string> &toke
 		std::string error = RPL::ERR_NOSUCHNICK(getServerName(), client->getNickName(), receiver_nick);
 		client->sendMessage(error);
 		return;
+	}
+
+	// Prevent self-sending
+	if (receiver->getNickName() == client->getNickName())
+	{
+    	std::string error = "NOTICE " + client->getNickName() + " :Cannot send file to yourself.";
+    	client->sendMessage(error);
+    	return;
 	}
 
 	// Read file from disk
